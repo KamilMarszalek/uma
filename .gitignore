@@ -77,7 +77,7 @@ cython_debug/
 *.npy
 *.npz
 
-data/
+
 datasets/
 outputs/
 results/

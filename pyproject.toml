@@ -14,6 +14,7 @@ dependencies = [
 
 [dependency-groups]
 dev = [
+    "mypy>=1.18.2",
     "pre-commit>=4.4.0",
     "pytest>=9.0.0",
     "ruff>=0.14.4",
@@ -28,5 +29,12 @@ show-fixes = true
 src = ["src"]
 
 [tool.ruff.lint]
-extend-select = ["I", "E", "W", "F", "C90", "B", "S"]
+extend-select = ["I", "E", "W", "F", "C90", "B", "S", "ANN", "UP", "PL"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
 

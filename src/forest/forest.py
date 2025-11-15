@@ -4,8 +4,7 @@ from typing import Any
 import numpy as np
 
 from src.forest.config import TournamentForestConfig
-from src.tree.config import TreeConfig
-from src.tree.tree import Tree
+from src.tree.tree import CARTTree, ID3Tree
 
 
 class TournamentForest:
@@ -15,48 +14,28 @@ class TournamentForest:
         targets: np.ndarray,
         config: TournamentForestConfig,
     ) -> None:
-        self.eval_function = config.eval_function
         self.data = data
         self.targets = targets
-        self.num_of_trees = config.num_of_trees
-        self.sample_ratio = config.sample_ratio
-        self.feature_ratio = config.feature_ratio
-        self.max_depth = config.max_depth
-        self.tournament_size = config.tournament_size
-
+        self.config = config
         self.rng = np.random.default_rng()
-        self.forest: list[Tree] = []
+        self.forest: list[ID3Tree | CARTTree] = []
 
     def build(self) -> None:
-        num_of_rows = self.data.shape[0]
-        total_features = self.data.shape[1]
-        for _ in range(self.num_of_trees):
-            sample_size = int(num_of_rows * self.sample_ratio)
-            sample_indices = self.rng.choice(
-                num_of_rows,
-                size=sample_size,
-                replace=True,
-            )
-            data_boot = self.data[sample_indices]
-            targets_boot = self.targets[sample_indices]
+        rows, cols = self.data.shape
 
-            feature_boot_size = max(
-                1,
-                int(total_features * self.feature_ratio),
+        for _ in range(self.config.num_of_trees):
+            n = int(rows * self.config.sample_ratio)
+            indices = self.rng.choice(rows, size=n, replace=True)
+            data_boot = self.data[indices]
+            targets_boot = self.targets[indices]
+            k = max(1, int(cols * self.config.feature_ratio))
+            feature_boot = list(self.rng.choice(cols, size=k, replace=False))
+            tree_config = self.config.tree_config_class(
+                max_depth=self.config.max_depth,
+                eval_function=self.config.eval_function,
+                tournament_size=self.config.tournament_size,
             )
-            feature_boot = list(
-                self.rng.choice(
-                    total_features,
-                    feature_boot_size,
-                    replace=False,
-                )
-            )
-            tree_config = TreeConfig(
-                max_depth=self.max_depth,
-                eval_function=self.eval_function,
-                tournament_size=self.tournament_size,
-            )
-            tree = Tree(
+            tree = self.config.tree_class(
                 data=data_boot,
                 targets=targets_boot,
                 features=feature_boot,
@@ -65,11 +44,5 @@ class TournamentForest:
             self.forest.append(tree)
 
     def predict(self, sample: np.ndarray) -> Any:
-        predictions = []
-        for tree in self.forest:
-            pred = tree.predict(sample)
-            if isinstance(pred, np.ndarray):
-                pred = pred.item()
-            predictions.append(pred)
-
+        predictions = [t.predict(sample) for t in self.forest]
         return Counter(predictions).most_common(1)[0][0]

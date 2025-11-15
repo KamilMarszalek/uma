@@ -6,5 +6,6 @@ from typing import Any
 class Node:
     feature: int | None = None
     target: Any | None = None
-    children: dict[int, "Node"] | None = None
+    children: dict[Any, "Node"] | None = None
     default_label: Any | None = None
+    threshold: float | None = None

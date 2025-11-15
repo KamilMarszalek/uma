@@ -6,12 +6,21 @@ import numpy as np
 from src.tree.get_splits import get_splits
 
 
-class EvalFunc(Protocol):
+class ID3EvalFunc(Protocol):
     def __call__(
         self,
         data: np.ndarray,
         targets: np.ndarray,
         feature: int,
+    ) -> float: ...
+
+
+class CARTEvalFunc(Protocol):
+    def __call__(
+        self,
+        parent: np.ndarray,
+        left: np.ndarray,
+        right: np.ndarray,
     ) -> float: ...
 
 
@@ -70,6 +79,27 @@ class GiniGain:
         if probs.size == 0:
             return 0.0
         return float(1.0 - np.sum(probs**2))
+
+
+class CARTGiniGain:
+    def __call__(
+        self, parent: np.ndarray, left: np.ndarray, right: np.ndarray
+    ) -> float:
+        def gini(x: np.ndarray) -> float:
+            if x.size == 0:
+                return 0.0
+            probs = np.array(list(Counter(x).values())) / x.size
+            return float(1.0 - np.sum(probs**2))
+
+        total = parent.size
+        if total == 0:
+            return 0.0
+        left_g = gini(left)
+        right_g = gini(right)
+
+        weighted = (left.size / total) * left_g + (right.size / total) * right_g
+
+        return float(gini(parent) - weighted)
 
 
 class GainRatio:

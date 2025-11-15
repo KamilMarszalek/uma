@@ -3,6 +3,8 @@ import numpy as np
 from src.forest.config import TournamentForestConfig
 from src.forest.forest import TournamentForest
 from src.tree.eval_func import InformationGain
+from src.tree.config import ID3Config
+from src.tree.tree import ID3Tree
 
 
 def test_forest_predict():
@@ -13,6 +15,8 @@ def test_forest_predict():
         num_of_trees=5,
         sample_ratio=1.0,
         feature_ratio=1.0,
+        tree_class=ID3Tree,
+        tree_config_class=ID3Config,
         eval_function=InformationGain(),
         max_depth=3,
         tournament_size=2,
@@ -33,6 +37,8 @@ def test_forest_bootstrap_sampling():
         sample_ratio=0.5,
         feature_ratio=1.0,
         eval_function=InformationGain(),
+        tree_class=ID3Tree,
+        tree_config_class=ID3Config,
         max_depth=3,
         tournament_size=2,
     )

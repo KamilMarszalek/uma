@@ -2,7 +2,7 @@ import numpy as np
 
 from src.tree.config import TreeConfig
 from src.tree.eval_func import InformationGain
-from src.tree.tree import Tree
+from src.tree.tree import ID3Tree
 
 
 def test_tree_single_label():
@@ -14,7 +14,7 @@ def test_tree_single_label():
         tournament_size=2,
     )
 
-    tree = Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(data, targets, features=[0], config=config)
     assert tree.root.target == 0
 
 
@@ -27,7 +27,7 @@ def test_tree_max_depth_stops():
         tournament_size=2,
     )
 
-    tree = Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(data, targets, features=[0], config=config)
     assert tree.root.target in {0, 1}  # majority or some valid prediction
 
 
@@ -37,7 +37,7 @@ def test_tree_stops_when_no_features():
     tree_config = TreeConfig(
         max_depth=5, eval_function=InformationGain(), tournament_size=2
     )
-    tree = Tree(
+    tree = ID3Tree(
         data=data,
         targets=targets,
         features=[],
@@ -58,7 +58,7 @@ def test_tree_splits_correctly():
         eval_function=InformationGain(),
         tournament_size=2,
     )
-    tree = Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(data, targets, features=[0], config=config)
 
     assert tree.root.feature == 0
     assert 0 in tree.root.children
@@ -76,7 +76,7 @@ def test_tree_predict():
         eval_function=InformationGain(),
         tournament_size=2,
     )
-    tree = Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(data, targets, features=[0], config=config)
 
     assert tree.predict(np.array([0])) == 0
     assert tree.predict(np.array([1])) == 1
@@ -90,7 +90,7 @@ def make_tree(data, targets, features=None, max_depth=5):
         eval_function=InformationGain(),
         tournament_size=2,
     )
-    return Tree(data, targets, features, config=config)
+    return ID3Tree(data, targets, features, config=config)
 
 
 def test_tree_handles_mixed_labels():
@@ -148,7 +148,7 @@ def test_tree_tournament_selection_restricted_features():
         eval_function=InformationGain(),
         tournament_size=10,
     )
-    tree = Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(data, targets, features=[0], config=config)
     assert tree.root.feature == 0
 
 
@@ -183,7 +183,6 @@ def test_tree_recursive_split_structure():
     tree = make_tree(data, targets, features=[0, 1], max_depth=2)
 
     assert tree.root.feature in {0, 1}
-
     assert any(child.target is not None for child in tree.root.children.values())
 
 
@@ -196,13 +195,13 @@ def test_tree_handles_empty_dataset():
         tournament_size=2,
     )
 
-    tree = Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(data, targets, features=[0], config=config)
 
     assert tree.root.target is None or tree.root.target == tree.root.default_label
 
 
 def test_tree_predict_on_empty_children_dict():
-    tree = Tree(
+    tree = ID3Tree(
         data=np.array([[0]]),
         targets=np.array([1]),
         features=[0],
@@ -220,6 +219,6 @@ def test_tournament_selection_returns_valid_feature():
         eval_function=InformationGain(),
         tournament_size=4,
     )
-    tree = Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(data, targets, features=[0], config=config)
 
     assert tree.root.feature in {0}

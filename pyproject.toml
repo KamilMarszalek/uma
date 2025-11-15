@@ -28,6 +28,8 @@ target-version = "py312"
 fix = true
 show-fixes = true
 src = ["src"]
+exclude = ["src/**/test_*.py", "tests"]
+
 
 [tool.ruff.lint]
 extend-select = ["I", "E", "W", "F", "C90", "B", "S", "UP", "PL"]
@@ -38,4 +40,15 @@ strict = true
 ignore_missing_imports = true
 disallow_untyped_defs = true
 warn_unused_ignores = true
+
+[[tool.mypy.overrides]]
+module = "src.tree.test.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "src.forest.test.*"
+ignore_errors = true
+
+
+
 

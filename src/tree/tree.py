@@ -43,6 +43,8 @@ class Tree:
 
     def most_common_label(self, targets: np.ndarray) -> Any:
         targets = targets.ravel()
+        if targets.size == 0:
+            return None
         return Counter(targets).most_common(1)[0][0]
 
     def tournament_selection(
@@ -97,6 +99,11 @@ class Tree:
                 )
                 continue
 
+            if len(new_features) == 0:
+                children[value] = Node(
+                    target=self.most_common_label(subset_targets),
+                )
+                continue
             children[value] = self.build_tree(
                 subset_data,
                 subset_targets,

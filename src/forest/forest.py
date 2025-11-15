@@ -51,7 +51,11 @@ class TournamentForest:
                     replace=False,
                 )
             )
-            tree_config = TreeConfig()
+            tree_config = TreeConfig(
+                max_depth=self.max_depth,
+                eval_function=self.eval_function,
+                tournament_size=self.tournament_size,
+            )
             tree = Tree(
                 data=data_boot,
                 targets=targets_boot,
@@ -61,5 +65,11 @@ class TournamentForest:
             self.forest.append(tree)
 
     def predict(self, sample: np.ndarray) -> Any:
-        predictions = [tree.predict(sample) for tree in self.forest]
+        predictions = []
+        for tree in self.forest:
+            pred = tree.predict(sample)
+            if isinstance(pred, np.ndarray):
+                pred = pred.item()
+            predictions.append(pred)
+
         return Counter(predictions).most_common(1)[0][0]

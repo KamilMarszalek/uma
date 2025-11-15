@@ -74,10 +74,15 @@ class Tree:
         self, data: np.ndarray, targets: np.ndarray, feature: int
     ) -> dict[int, tuple[np.ndarray, np.ndarray]]:
         raw = get_splits(data, targets, feature)
-        return {
-            value: (data[data[:, feature] == value], subset_targets)
-            for value, subset_targets in raw.items()
-        }
+        col = data[:, feature]
+
+        splits: dict[int, tuple[np.ndarray, np.ndarray]] = {}
+        for value, subset_targets in raw.items():
+            mask = col == value
+            subset_data = data[mask]
+            splits[value] = (subset_data, subset_targets)
+
+        return splits
 
     def build_children(
         self,
@@ -152,9 +157,18 @@ class Tree:
 
     def _predict(self, tree: Node, sample: np.ndarray) -> Any:
         if tree.target is not None:
-            return tree.target
-        value = sample[tree.feature]
-        child = tree.children.get(value) if tree.children is not None else None
+            return (
+                tree.target.item()
+                if isinstance(tree.target, np.ndarray)
+                else tree.target
+            )
+
+        if tree.children is None:
+            return tree.default_label
+
+        value = int(sample[tree.feature])
+        child = tree.children.get(value)
         if child is None:
             return tree.default_label
+
         return self._predict(child, sample)

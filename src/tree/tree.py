@@ -39,7 +39,13 @@ class Tree:
         self, data: np.ndarray, targets: np.ndarray, features: list[int]
     ) -> int | None:
         chosen = list(
-            set(self.rng.choice(features, size=self.tournament_size, replace=True))
+            set(
+                self.rng.choice(
+                    features,
+                    size=self.tournament_size,
+                    replace=True,
+                )
+            )
         )
         best_feature = None
         best_gain = -np.inf
@@ -65,25 +71,27 @@ class Tree:
         self,
         splits: dict[int, tuple[np.ndarray, np.ndarray]],
         features: list[int],
-        remaining_depth: int | None,
+        remain_depth: int | None,
         parent_targets: np.ndarray,
         chosen_feature: int,
     ) -> dict[int, Node]:
         new_features = [f for f in features if f != chosen_feature]
-        next_depth = remaining_depth - 1 if remaining_depth is not None else None
+        new_depth = remain_depth - 1 if remain_depth is not None else None
 
         children: dict[int, Node] = {}
 
         for value, (subset_data, subset_targets) in splits.items():
             if subset_targets.size == 0:
-                children[value] = Node(target=self.most_common_label(parent_targets))
+                children[value] = Node(
+                    target=self.most_common_label(parent_targets),
+                )
                 continue
 
             children[value] = self.build_tree(
                 subset_data,
                 subset_targets,
                 new_features,
-                remaining_depth=next_depth,
+                remaining_depth=new_depth,
             )
 
         return children
@@ -95,7 +103,11 @@ class Tree:
         features: list[int],
         remaining_depth: int | None = None,
     ) -> Node:
-        stop_node = self.check_stop_condition(targets, features, remaining_depth)
+        stop_node = self.check_stop_condition(
+            targets,
+            features,
+            remaining_depth,
+        )
         if stop_node is not None:
             return stop_node
 

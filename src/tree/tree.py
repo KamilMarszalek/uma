@@ -1,20 +1,29 @@
 from collections import Counter
 
 import numpy as np
-from eval_func import EvalFunc
 from get_splits import get_splits
 from node import L, Node
+
+from src.tree.config import TreeConfig
 
 
 class Tree:
     def __init__(
         self,
-        eval_function: EvalFunc,
-        tournament_size: int = 2,
+        data: np.ndarray,
+        targets: np.ndarray,
+        features: list[int],
+        config: TreeConfig,
     ) -> None:
-        self.eval_function = eval_function
-        self.tournament_size = tournament_size
+        self.eval_function = config.eval_function
+        self.tournament_size = config.tournament_size
         self.rng = np.random.default_rng()
+        self.root = self.build_tree(
+            data,
+            targets,
+            features,
+            config.max_depth,
+        )
 
     def check_stop_condition(
         self,
@@ -130,11 +139,14 @@ class Tree:
             default_label=self.most_common_label(targets),
         )
 
-    def predict(self, tree: Node, sample: np.ndarray) -> L:
+    def predict(self, sample: np.ndarray) -> L:
+        return self._predict(self.root, sample)
+
+    def _predict(self, tree: Node, sample: np.ndarray) -> L:
         if tree.target is not None:
             return tree.target
         value = sample[tree.feature]
         child = tree.children.get(value)
         if child is None:
             return tree.default_label
-        return self.predict(child, sample)
+        return self._predict(child, sample)

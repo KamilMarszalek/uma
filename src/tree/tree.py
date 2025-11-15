@@ -1,10 +1,11 @@
 from collections import Counter
+from typing import Any
 
 import numpy as np
-from get_splits import get_splits
-from node import L, Node
 
 from src.tree.config import TreeConfig
+from src.tree.get_splits import get_splits
+from src.tree.node import Node
 
 
 class Tree:
@@ -40,7 +41,7 @@ class Tree:
 
         return None
 
-    def most_common_label(self, targets: np.ndarray) -> L:
+    def most_common_label(self, targets: np.ndarray) -> Any:
         targets = targets.ravel()
         return Counter(targets).most_common(1)[0][0]
 
@@ -139,14 +140,14 @@ class Tree:
             default_label=self.most_common_label(targets),
         )
 
-    def predict(self, sample: np.ndarray) -> L:
+    def predict(self, sample: np.ndarray) -> Any:
         return self._predict(self.root, sample)
 
-    def _predict(self, tree: Node, sample: np.ndarray) -> L:
+    def _predict(self, tree: Node, sample: np.ndarray) -> Any:
         if tree.target is not None:
             return tree.target
         value = sample[tree.feature]
-        child = tree.children.get(value)
+        child = tree.children.get(value) if tree.children is not None else None
         if child is None:
             return tree.default_label
         return self._predict(child, sample)

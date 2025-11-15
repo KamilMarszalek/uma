@@ -1,12 +1,10 @@
 from dataclasses import dataclass
-from typing import TypeVar
-
-L = TypeVar("L")
+from typing import Any
 
 
 @dataclass
-class Node[L]:
+class Node:
     feature: int | None = None
-    target: L | None = None
-    children: dict[int, "Node[L]"] | None = None
-    default_label: L | None = None
+    target: Any | None = None
+    children: dict[int, "Node"] | None = None
+    default_label: Any | None = None

@@ -2,7 +2,8 @@ from collections import Counter
 from typing import Protocol
 
 import numpy as np
-from get_splits import get_splits
+
+from src.tree.get_splits import get_splits
 
 
 class EvalFunc(Protocol):

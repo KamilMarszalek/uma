@@ -1,60 +1,31 @@
 import numpy as np
-import pandas as pd
 
-from src.data.uci_data_provider import get_uci_data
+from src.data.data_encoding import prepare_data_one_hot
 from src.forest.config import TournamentForestConfig
 from src.forest.forest import TournamentForest
 from src.tree.config import CARTConfig
 from src.tree.eval_func import CARTGiniGain
 from src.tree.tree import CARTTree
 
-TRAIN_SIZE = 0.6
+TRAIN_SIZE = 0.7
 RANDOM_SEED = 42
 
 
-def encode_categorical(df: pd.DataFrame) -> pd.DataFrame:
-    encoded = df.copy()
-    for col in encoded.columns:
-        encoded[col] = encoded[col].astype("category").cat.codes
-    return encoded
-
-
-def encode_targets(targets: pd.DataFrame | pd.Series) -> np.ndarray:
-    if isinstance(targets, pd.DataFrame):
-        series = targets.iloc[:, 0]
-    else:
-        series = targets
-    return series.astype("category").cat.codes.to_numpy()
-
-
 def main() -> None:
-    data, targets = get_uci_data(2)
+    train_data, test_data, train_targets, test_targets = prepare_data_one_hot(
+        73, TRAIN_SIZE, RANDOM_SEED
+    )
 
-    data = encode_categorical(data)
-    target_codes = encode_targets(targets)
-
-    data_np = data.to_numpy()
-    n_samples = data_np.shape[0]
-
-    rng = np.random.default_rng(RANDOM_SEED)
-    indices = rng.permutation(n_samples)
-
-    train_size = int(TRAIN_SIZE * n_samples)
-    train_indices = indices[:train_size]
-    test_indices = indices[train_size:]
-
-    train_data = data_np[train_indices]
-    train_targets = target_codes[train_indices]
-    test_data = data_np[test_indices]
-    test_targets = target_codes[test_indices]
+    n_features = train_data.shape[1]
+    print(f"Number of features: {n_features}")
 
     config = TournamentForestConfig(
-        num_of_trees=50,
+        num_of_trees=25,
         sample_ratio=0.8,
-        feature_ratio=np.sqrt(data_np.shape[1]) / data_np.shape[1],
+        feature_ratio=0.8,
         eval_function=CARTGiniGain(),
         max_depth=10,
-        tournament_size=2,
+        tournament_size=np.sqrt(n_features).astype(int),
         tree_class=CARTTree,
         tree_config_class=CARTConfig,
     )

@@ -60,3 +60,18 @@ def prepare_data_one_hot(
     y_test = le.transform(y_test_raw)
 
     return X_train, X_test, y_train, y_test
+
+
+def encode_categorical(df: pd.DataFrame) -> pd.DataFrame:
+    encoded = df.copy()
+    for col in encoded.columns:
+        encoded[col] = encoded[col].astype("category").cat.codes
+    return encoded
+
+
+def encode_targets(targets: pd.DataFrame | pd.Series) -> np.ndarray:
+    if isinstance(targets, pd.DataFrame):
+        series = targets.iloc[:, 0]
+    else:
+        series = targets
+    return series.astype("category").cat.codes.to_numpy()

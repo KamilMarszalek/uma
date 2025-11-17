@@ -1,6 +1,5 @@
-import numpy as np
-
-from src.data.data_encoding import prepare_data_one_hot
+from src.data.encoders import CatEncodingStrategy
+from src.data.uci_data_provider import get_uci_data
 from src.forest.config import TournamentForestConfig
 from src.forest.forest import TournamentForest
 from src.tree.config import CARTConfig
@@ -12,20 +11,25 @@ RANDOM_SEED = 42
 
 
 def main() -> None:
-    train_data, test_data, train_targets, test_targets = prepare_data_one_hot(
-        73, TRAIN_SIZE, RANDOM_SEED
+    train_data, test_data, train_targets, test_targets = get_uci_data(
+        set_id=2,
+        train_size=TRAIN_SIZE,
+        random_seed=RANDOM_SEED,
+        cat_encoding_strategy=CatEncodingStrategy.CATEGORICAL,
     )
 
     n_features = train_data.shape[1]
     print(f"Number of features: {n_features}")
 
+
     config = TournamentForestConfig(
-        num_of_trees=25,
+        num_of_trees=15,
         sample_ratio=0.8,
+        # feature_ratio=np.sqrt(data_np.shape[1]) / data_np.shape[1],
         feature_ratio=0.8,
         eval_function=CARTGiniGain(),
         max_depth=10,
-        tournament_size=np.sqrt(n_features).astype(int),
+        tournament_size=4,
         tree_class=CARTTree,
         tree_config_class=CARTConfig,
     )

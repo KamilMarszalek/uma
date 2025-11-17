@@ -1,10 +1,55 @@
+import numpy as np
 import pandas as pd
 from ucimlrepo import fetch_ucirepo
 
+from src.data.encoders import (
+    CatEncodingStrategy,
+    cat_encoding_functions,
+    encode_targets,
+)
+from src.data.train_test_split import train_test_split
+
+
+def get_uci_data(
+    set_id: int = 73,
+    train_size: float = 0.7,
+    random_seed: int = 42,
+    cat_encoding_strategy: CatEncodingStrategy = CatEncodingStrategy.CATEGORICAL,
+) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
+    encode = cat_encoding_functions[cat_encoding_strategy]
+
+    data, targets = download_uci_data(set_id)
+
+    print("Data acquired from UCI repository.")
+
+    cat_cols = data.select_dtypes(include=["object", "category"]).columns
+    num_cols = data.columns.difference(cat_cols)
+    data_cat = encode(data[cat_cols])
+    data_encoded = pd.concat([data[num_cols], data_cat], axis=1)
+
+    targets_encoded = encode_targets(targets)
+
+    data_train, data_test, targets_train, targets_test = train_test_split(
+        data_encoded,
+        targets_encoded,
+        train_size=train_size,
+        random_seed=random_seed,
+        stratify=targets_encoded,
+    )
+
+    return (
+        data_train.to_numpy(),
+        data_test.to_numpy(),
+        targets_train.to_numpy(),
+        targets_test.to_numpy(),
+    )
+
 
 # 73 is mushroom dataset
-def get_uci_data(set_id: int = 73) -> tuple[pd.DataFrame, pd.DataFrame]:
+def download_uci_data(set_id: int = 73) -> tuple[pd.DataFrame, pd.DataFrame]:
     dataset = fetch_ucirepo(id=set_id)
     X = dataset.data.features
     Y = dataset.data.targets
     return X, Y
+
+

@@ -128,7 +128,7 @@ class CARTEvalFunc(Protocol):
     ) -> float: ...
 
 
-class EvalEnum(Enum):
+class EvalFunction(Enum):
     # ID3
     ID3_INFORMATION_GAIN = InformationGain
     ID3_GAIN_RATIO = GainRatio

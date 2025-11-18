@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
-from src.tree.eval_func import EvalEnum
+from src.tree.config import TreeConfig
+from src.tree.eval_func import EvalFunction
+from src.tree.tree import TreeClass
 
 
 @dataclass
@@ -8,8 +10,8 @@ class TournamentForestConfig:
     num_of_trees: int
     sample_ratio: float
     feature_ratio: float
-    tree_class: type
-    tree_config_class: type
+    tree_class: TreeClass
+    tree_config_class: TreeConfig
     max_depth: int = 5
     tournament_size: int = 2
-    eval_function: EvalEnum = EvalEnum.ID3_INFORMATION_GAIN
+    eval_function: EvalFunction = EvalFunction.ID3_INFORMATION_GAIN

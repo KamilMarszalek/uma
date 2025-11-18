@@ -1,4 +1,5 @@
 from collections import Counter
+from enum import Enum
 from typing import Any
 
 import numpy as np
@@ -318,3 +319,11 @@ class CARTTree:
                 return node.default_label
             node = node.children[key]
         return node.target
+
+
+class TreeClass(Enum):
+    ID3 = ID3Tree
+    CART = CARTTree
+
+    def __call__(self, *args, **kwargs):
+        return self.value(*args, **kwargs)

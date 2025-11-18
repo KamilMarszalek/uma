@@ -64,7 +64,6 @@ dmypy.json
 cython_debug/
 
 
-*.csv
 *.tsv
 *.xlsx
 *.log

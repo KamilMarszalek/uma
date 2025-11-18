@@ -15,7 +15,7 @@ def main() -> None:
         set_id=222,
         train_size=TRAIN_SIZE,
         random_seed=RANDOM_SEED,
-        cat_encoding_strategy=CatEncodingStrategy.ONE_HOT,
+        encode=CatEncodingStrategy.CATEGORICAL,
     )
 
     n_features = train_data.shape[1]

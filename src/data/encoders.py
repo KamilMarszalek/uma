@@ -23,11 +23,9 @@ def encode_one_hot(df: pd.DataFrame) -> pd.DataFrame:
 
 
 class CatEncodingStrategy(Enum):
-    CATEGORICAL = 1
-    ONE_HOT = 2
+    CATEGORICAL = encode_categorical
+    ONE_HOT = encode_one_hot
 
+    def encode(self, df: pd.DataFrame) -> pd.DataFrame:
+        return self.value(df)
 
-cat_encoding_functions = {
-    CatEncodingStrategy.CATEGORICAL: encode_categorical,
-    CatEncodingStrategy.ONE_HOT: encode_one_hot,
-}

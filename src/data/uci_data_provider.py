@@ -4,7 +4,6 @@ from ucimlrepo import fetch_ucirepo
 
 from src.data.encoders import (
     CatEncodingStrategy,
-    cat_encoding_functions,
     encode_targets,
 )
 from src.data.train_test_split import train_test_split
@@ -14,10 +13,8 @@ def get_uci_data(
     set_id: int = 73,
     train_size: float = 0.7,
     random_seed: int = 42,
-    cat_encoding_strategy: CatEncodingStrategy = CatEncodingStrategy.CATEGORICAL,
+    encode: CatEncodingStrategy = CatEncodingStrategy.CATEGORICAL,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    encode = cat_encoding_functions[cat_encoding_strategy]
-
     data, targets = download_uci_data(set_id)
 
     print("Data acquired from UCI repository.")
@@ -51,5 +48,3 @@ def download_uci_data(set_id: int = 73) -> tuple[pd.DataFrame, pd.DataFrame]:
     X = dataset.data.features
     Y = dataset.data.targets
     return X, Y
-
-

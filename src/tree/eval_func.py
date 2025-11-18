@@ -128,18 +128,14 @@ class CARTEvalFunc(Protocol):
     ) -> float: ...
 
 
-class ID3EvalEnum(Enum):
-    INFORMATION_GAIN = InformationGain
-    GAIN_RATIO = GainRatio
-    GINI_GAIN = GiniGain
+class EvalEnum(Enum):
+    # ID3
+    ID3_INFORMATION_GAIN = InformationGain
+    ID3_GAIN_RATIO = GainRatio
+    ID3_GINI_GAIN = GiniGain
 
-    def __call__(self, *args, **kwargs):
-        return self.value()(*args, **kwargs)
-
-
-class CARTEvalEnum(Enum):
+    # CART
     CART_GINI_GAIN = CARTGiniGain
 
     def __call__(self, *args, **kwargs):
         return self.value()(*args, **kwargs)
-

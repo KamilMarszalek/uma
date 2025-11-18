@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from src.tree.eval_func import CARTEvalEnum, ID3EvalEnum
+from src.tree.eval_func import EvalEnum
 
 
 @dataclass
@@ -12,4 +12,4 @@ class TournamentForestConfig:
     tree_config_class: type
     max_depth: int = 5
     tournament_size: int = 2
-    eval_function: ID3EvalEnum | CARTEvalEnum = ID3EvalEnum.INFORMATION_GAIN
+    eval_function: EvalEnum = EvalEnum.ID3_INFORMATION_GAIN

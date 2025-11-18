@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 from typing import Literal
 
+from experiments.experiment_config import ExperimentConfig
 from src.data.encoders import CatEncodingStrategy
-from src.forest.config import TournamentForestConfig
 
 
 @dataclass
@@ -35,28 +35,23 @@ def cat_endoding_to_string(strategy: CatEncodingStrategy) -> str:
 
 
 def convert_config_to_log(  # noqa: PLR0913
-    experiment: str,
-    config: TournamentForestConfig,
-    set_id: int,
-    train_size: float,
-    random_seed: int,
-    categorial_encoding: str,
+    config: ExperimentConfig,
     time_of_building: float,
     accuracy: float,
 ) -> ForestLog:
     return ForestLog(
-        experiment=experiment,
-        forest_type=config.tree_class.name,
-        eval_function=config.eval_function.name,
-        num_trees=config.num_of_trees,
-        sample_ratio=config.sample_ratio,
-        feature_ratio=config.feature_ratio,
-        tree_max_depth=config.max_depth,
-        tree_tournament_size=config.tournament_size,
-        set_id=set_id,
-        train_size=train_size,
-        random_seed=random_seed,
-        categorial_encoding=cat_endoding_to_string(categorial_encoding),
+        experiment=config.experiment_name,
+        forest_type=config.forest_config.tree_class.name,
+        eval_function=config.forest_config.eval_function.name,
+        num_trees=config.forest_config.num_of_trees,
+        sample_ratio=config.forest_config.sample_ratio,
+        feature_ratio=config.forest_config.feature_ratio,
+        tree_max_depth=config.forest_config.max_depth,
+        tree_tournament_size=config.forest_config.tournament_size,
+        set_id=config.set_id,
+        train_size=config.train_size,
+        random_seed=config.random_seed,
+        categorial_encoding=cat_endoding_to_string(config.categorial_encoding),
         time_of_building=time_of_building,
         accuracy=accuracy,
     )

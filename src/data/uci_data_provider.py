@@ -9,13 +9,16 @@ from src.data.encoders import (
 from src.data.train_test_split import train_test_split
 
 
-def get_uci_data(
+def get_uci_data(  # noqa: PLR0913
     set_id: int = 73,
     train_size: float = 0.7,
     random_seed: int = 42,
     encode: CatEncodingStrategy = CatEncodingStrategy.CATEGORICAL,
+    data: pd.DataFrame | None = None,
+    targets: pd.DataFrame | pd.Series | None = None,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
-    data, targets = download_uci_data(set_id)
+    if data is None or targets is None:
+        data, targets = download_uci_data(set_id)
 
     print("Data acquired from UCI repository.")
 

@@ -12,10 +12,8 @@ class ExactLevelFilter(logging.Filter):
         return record.levelno == self.level
 
 
-logger = logging.getLogger("TournamentForestLogger")
 DATA_TRACE_LEVEL = 5
-logger.addLevelName(DATA_TRACE_LEVEL, "DATA_TRACE")
-logger.setLevel(DATA_TRACE_LEVEL)
+logging.addLevelName(DATA_TRACE_LEVEL, "DATA_TRACE")
 
 
 def data_trace(self, msg, *args, **kwargs):
@@ -24,6 +22,9 @@ def data_trace(self, msg, *args, **kwargs):
             msg = asdict(msg)
         self._log(DATA_TRACE_LEVEL, msg, args, **kwargs)
 
+
+logger = logging.getLogger("TournamentForestLogger")
+logger.setLevel(DATA_TRACE_LEVEL)
 
 logging.Logger.data_trace = data_trace
 

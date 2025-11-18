@@ -1,7 +1,9 @@
+from experiments.experiment_config import ExperimentConfig
+from experiments.perform_experiment import perform_experiment
+
 from src.data.encoders import CatEncodingStrategy
-from src.data.uci_data_provider import get_uci_data
+from src.data.uci_data_provider import download_uci_data
 from src.forest.config import TournamentForestConfig
-from src.forest.forest import TournamentForest
 from src.tree.config import TreeConfig
 from src.tree.eval_func import EvalFunction
 from src.tree.tree import TreeClass
@@ -11,17 +13,9 @@ RANDOM_SEED = 42
 
 
 def main() -> None:
-    train_data, test_data, train_targets, test_targets = get_uci_data(
-        set_id=73,
-        train_size=TRAIN_SIZE,
-        random_seed=RANDOM_SEED,
-        encode=CatEncodingStrategy.CATEGORICAL,
-    )
+    data, targets = download_uci_data(set_id=73)  # Mushroom dataset
 
-    n_features = train_data.shape[1]
-    print(f"Number of features: {n_features}")
-
-    config = TournamentForestConfig(
+    forest_config = TournamentForestConfig(
         num_of_trees=15,
         sample_ratio=0.8,
         # feature_ratio=np.sqrt(data_np.shape[1]) / data_np.shape[1],
@@ -33,17 +27,20 @@ def main() -> None:
         tree_config_class=TreeConfig.CART,
     )
 
-    forest = TournamentForest(train_data, train_targets, config)
-    forest.build()
+    experiment_config = ExperimentConfig(
+        experiment_name="Mushroom_Tournament_Test_Experiment",
+        set_id=73,
+        train_size=TRAIN_SIZE,
+        random_seed=RANDOM_SEED,
+        categorial_encoding=CatEncodingStrategy.CATEGORICAL,
+        forest_config=forest_config,
+    )
 
-    correct = 0
-    for x, y_true in zip(test_data, test_targets, strict=True):
-        y_pred = forest.predict(x)
-        if y_pred == y_true:
-            correct += 1
-
-    accuracy = correct / test_data.shape[0]
-    print(f"Accuracy: {accuracy:.4f}")
+    perform_experiment(
+        config=experiment_config,
+        data=data,
+        targets=targets,
+    )
 
 
 if __name__ == "__main__":

@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from enum import Enum
+from typing import Any
 
 from src.tree.eval_func import CARTEvalFunc, EvalFunction, ID3EvalFunc
 
@@ -23,5 +24,5 @@ class TreeConfig(Enum):
     ID3 = ID3Config
     CART = CARTConfig
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         return self.value(*args, **kwargs)

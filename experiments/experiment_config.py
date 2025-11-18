@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 
+from src.data.encoders import CatEncodingStrategy
 from src.forest.config import TournamentForestConfig
 
 
@@ -9,5 +10,5 @@ class ExperimentConfig:
     set_id: int
     train_size: float
     random_seed: int
-    categorial_encoding: str
+    categorial_encoding: CatEncodingStrategy
     forest_config: TournamentForestConfig

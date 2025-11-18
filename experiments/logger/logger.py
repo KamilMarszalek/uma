@@ -1,14 +1,15 @@
 import logging
 from dataclasses import asdict, is_dataclass
+from typing import Any
 
 from experiments.logger.csv_handler import CSVHandler
 
 
 class ExactLevelFilter(logging.Filter):
-    def __init__(self, level):
+    def __init__(self, level: int):
         self.level = level
 
-    def filter(self, record):
+    def filter(self, record: logging.LogRecord) -> bool:
         return record.levelno == self.level
 
 
@@ -16,17 +17,25 @@ DATA_TRACE_LEVEL = 5
 logging.addLevelName(DATA_TRACE_LEVEL, "DATA_TRACE")
 
 
-def data_trace(self, msg, *args, **kwargs):
+def log_data_trace(
+    self: logging.Logger, msg: Any, *args: object, exc_info: Any = None
+) -> None:
     if self.isEnabledFor(DATA_TRACE_LEVEL):
-        if is_dataclass(msg):
+        if is_dataclass(msg) and not isinstance(msg, type):
             msg = asdict(msg)
-        self._log(DATA_TRACE_LEVEL, msg, args, **kwargs)
+        self._log(DATA_TRACE_LEVEL, msg, args, exc_info=exc_info)
 
 
-logger = logging.getLogger("TournamentForestLogger")
+class TournamentLogger(logging.Logger):
+    def data_trace(self, msg: Any, *args: Any, **kwargs: Any) -> None:
+        if self.isEnabledFor(DATA_TRACE_LEVEL):
+            if is_dataclass(msg) and not isinstance(msg, type):
+                msg = asdict(msg)
+            self._log(DATA_TRACE_LEVEL, msg, args, **kwargs)
+
+
+logger = TournamentLogger("TournamentForestLogger", level=DATA_TRACE_LEVEL)
 logger.setLevel(DATA_TRACE_LEVEL)
-
-logging.Logger.data_trace = data_trace
 
 console_info_handler = logging.StreamHandler()
 console_info_handler.setLevel(logging.INFO)

@@ -1,3 +1,4 @@
 experiment,forest_type,eval_function,num_trees,sample_ratio,feature_ratio,tree_max_depth,tree_tournament_size,set_id,train_size,random_seed,categorial_encoding,time_of_building,accuracy
 Adult_Census_CART_Test_Experiment,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,2,0.7,42,ONE_HOT,73.9139,0.5516
 Adult_Census_CART_Test_Experiment,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,2,0.7,42,CATEGORICAL,196.8023,0.5905
+Test_Experiment,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.5963,1.0

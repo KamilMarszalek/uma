@@ -8,8 +8,8 @@ class Timer:
     def __init__(self, func: Callable[[Any], Any], gc_disable: bool = False):
         self.func = func
         self.gc_disable = gc_disable
-        self.elapsed = None
-        self._gc_old = None
+        self.elapsed: float | None = None
+        self._gc_old: bool | None = None
 
     def run(self, data: Any) -> Any:
         self._gc_old = gc.isenabled()

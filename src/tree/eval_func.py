@@ -1,6 +1,6 @@
 from collections import Counter
 from enum import Enum
-from typing import Protocol
+from typing import Any, Protocol
 
 import numpy as np
 
@@ -137,5 +137,5 @@ class EvalFunction(Enum):
     # CART
     CART_GINI_GAIN = CARTGiniGain
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         return self.value()(*args, **kwargs)

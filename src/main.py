@@ -13,7 +13,7 @@ RANDOM_SEED = 42
 
 
 def main() -> None:
-    data, targets = download_uci_data(set_id=2)
+    data, targets = download_uci_data(set_id=73)
 
     forest_config = TournamentForestConfig(
         num_of_trees=15,
@@ -28,8 +28,8 @@ def main() -> None:
     )
 
     experiment_config = ExperimentConfig(
-        experiment_name="Adult_Census_CART_Test_Experiment",
-        set_id=2,
+        experiment_name="Test_Experiment",
+        set_id=73,
         train_size=TRAIN_SIZE,
         random_seed=RANDOM_SEED,
         categorial_encoding=CatEncodingStrategy.CATEGORICAL,

@@ -43,7 +43,6 @@ def _build_single_tree(
     return tree
 
 
-
 class TournamentForest:
     def __init__(
         self,

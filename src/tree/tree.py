@@ -325,5 +325,5 @@ class TreeClass(Enum):
     ID3 = ID3Tree
     CART = CARTTree
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, *args: Any, **kwargs: Any) -> Any:
         return self.value(*args, **kwargs)

@@ -10,7 +10,6 @@ accuracy_type = float
 time_type = float
 
 
-
 def perform_experiment(
     config: ExperimentConfig,
     data: pd.DataFrame | None = None,

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Literal
+from typing import Literal, cast
 
 from experiments.experiment_config import ExperimentConfig
 from src.data.encoders import CatEncodingStrategy
@@ -30,6 +30,8 @@ def cat_endoding_to_string(strategy: CatEncodingStrategy) -> str:
         return "CATEGORICAL"
     elif strategy == CatEncodingStrategy.ONE_HOT:
         return "ONE_HOT"
+    else:
+        raise ValueError(f"Unknown CatEncodingStrategy: {strategy}")
 
 
 def convert_config_to_log(
@@ -39,8 +41,16 @@ def convert_config_to_log(
 ) -> ForestLog:
     return ForestLog(
         experiment=config.experiment_name,
-        forest_type=config.forest_config.tree_class.name,
-        eval_function=config.forest_config.eval_function.name,
+        forest_type=cast(Literal["CART", "ID3"], config.forest_config.tree_class.name),
+        eval_function=cast(
+            Literal[
+                "ID3_INFORMATION_GAIN",
+                "ID3_GAIN_RATIO",
+                "ID3_GINI_GAIN",
+                "CART_GINI_GAIN",
+            ],
+            config.forest_config.eval_function,
+        ),
         num_trees=config.forest_config.num_of_trees,
         sample_ratio=config.forest_config.sample_ratio,
         feature_ratio=config.forest_config.feature_ratio,
@@ -49,7 +59,10 @@ def convert_config_to_log(
         set_id=config.set_id,
         train_size=config.train_size,
         random_seed=config.random_seed,
-        categorial_encoding=cat_endoding_to_string(config.categorial_encoding),
+        categorial_encoding=cast(
+            Literal["ONE_HOT", "CATEGORICAL"],
+            cat_endoding_to_string(config.categorial_encoding),
+        ),
         time_of_building=round(time_of_building, 4),
         accuracy=round(accuracy, 4),
     )

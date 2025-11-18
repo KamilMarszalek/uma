@@ -15,9 +15,9 @@ class Timer:
         self._gc_old = gc.isenabled()
         if self.gc_disable:
             gc.disable()
-        start = time.process_time()
+        start = time.perf_counter()
         result = self.func(data)
-        stop = time.process_time()
+        stop = time.perf_counter()
         if self.gc_disable and self._gc_old:
             gc.enable()
         self.elapsed = stop - start

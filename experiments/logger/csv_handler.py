@@ -1,5 +1,6 @@
 import csv
 import logging
+import os
 
 
 class CSVHandler(logging.Handler):
@@ -7,9 +8,12 @@ class CSVHandler(logging.Handler):
         super().__init__()
         self.filename = filename
         self.fieldnames = fieldnames
-        self.file = open(filename, mode="w", newline="")
+
+        file_exists = os.path.isfile(filename) and os.path.getsize(filename) > 0
+        self.file = open(filename, mode="a", newline="")
         self.writer = csv.DictWriter(self.file, fieldnames=fieldnames)
-        self.writer.writeheader()
+        if not file_exists:
+            self.writer.writeheader()
 
     def emit(self, record):
         try:
@@ -21,5 +25,3 @@ class CSVHandler(logging.Handler):
     def close(self):
         self.file.close()
         super().close()
-
-

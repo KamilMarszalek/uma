@@ -32,7 +32,7 @@ def cat_endoding_to_string(strategy: CatEncodingStrategy) -> str:
         return "ONE_HOT"
 
 
-def convert_config_to_log(  # noqa: PLR0913
+def convert_config_to_log(
     config: ExperimentConfig,
     time_of_building: float,
     accuracy: float,

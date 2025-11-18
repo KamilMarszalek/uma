@@ -4,6 +4,7 @@ from concurrent.futures import ProcessPoolExecutor
 from typing import Any
 
 import numpy as np
+from experiments.logger.logger import logger
 
 from src.forest.config import TournamentForestConfig
 from src.tree.tree import CARTTree, ID3Tree
@@ -30,12 +31,17 @@ def _build_single_tree(
         tournament_size=config.tournament_size,
     )
 
-    return config.tree_class(
+    tree = config.tree_class(
         data=data_boot,
         targets=targets_boot,
         features=feature_boot,
         config=tree_config,
     )
+
+    logger.info("Built tree with seed %d", seed)
+
+    return tree
+
 
 
 class TournamentForest:

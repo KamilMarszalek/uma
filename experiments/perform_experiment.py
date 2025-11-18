@@ -24,10 +24,10 @@ def perform_experiment(
         targets=targets,
     )
 
-    forest = TournamentForest(train_data, train_targets, config.forest_config)
+    forest = TournamentForest(config.forest_config)
 
-    timer = Timer(forest.build)
-    timer.run(None)
+    timer = Timer(forest.fit)
+    timer.run(train_data, train_targets)
     time_of_building = timer.get_elapsed()
 
     correct = 0

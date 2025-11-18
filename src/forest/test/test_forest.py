@@ -4,7 +4,7 @@ from src.forest.config import TournamentForestConfig
 from src.forest.forest import TournamentForest
 from src.tree.eval_func import InformationGain
 from src.tree.config import ID3Config
-from src.tree.tree import ID3Tree
+from src.tree.cart_tree import ID3Tree
 
 
 def test_forest_predict():
@@ -22,7 +22,7 @@ def test_forest_predict():
         tournament_size=2,
     )
     forest = TournamentForest(data, targets, config)
-    forest.build()
+    forest.fit()
 
     assert forest.predict(np.array([0])) == 0
     assert forest.predict(np.array([1])) == 1
@@ -43,7 +43,7 @@ def test_forest_bootstrap_sampling():
         tournament_size=2,
     )
     forest = TournamentForest(data, targets, config)
-    forest.build()
+    forest.fit()
 
     # forest should contain 3 trees
     assert len(forest.forest) == 3

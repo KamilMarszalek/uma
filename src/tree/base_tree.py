@@ -1,0 +1,31 @@
+from abc import ABC, abstractmethod
+from collections import Counter
+from typing import Any
+
+import numpy as np
+
+from src.tree.node import Node
+
+
+class BaseTree(ABC):
+    def __init__(self) -> None:
+        self.rng = np.random.default_rng()
+        self.root: Node | None = None
+
+    @abstractmethod
+    def predict(self, sample: np.ndarray) -> Any: ...
+
+    @abstractmethod
+    def fit(
+        self,
+        data: np.ndarray,
+        targets: np.ndarray,
+        features: list[int],
+    ) -> None: ...
+
+    @staticmethod
+    def most_common_label(targets: np.ndarray) -> Any:
+        targets = targets.ravel()
+        if targets.size == 0:
+            return None
+        return Counter(targets).most_common(1)[0][0]

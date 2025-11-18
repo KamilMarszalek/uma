@@ -7,7 +7,8 @@ import numpy as np
 from experiments.logger.logger import logger
 
 from src.forest.config import TournamentForestConfig
-from src.tree.tree import CARTTree, ID3Tree
+from src.tree.cart_tree import CARTTree
+from src.tree.id3_tree import ID3Tree
 
 
 def _build_single_tree(
@@ -32,10 +33,12 @@ def _build_single_tree(
     )
 
     tree = config.tree_class(
+        config=tree_config,
+    )
+    tree.fit(
         data=data_boot,
         targets=targets_boot,
         features=feature_boot,
-        config=tree_config,
     )
 
     logger.info("Built tree with seed %d", seed)
@@ -46,23 +49,24 @@ def _build_single_tree(
 class TournamentForest:
     def __init__(
         self,
-        data: np.ndarray,
-        targets: np.ndarray,
         config: TournamentForestConfig,
     ) -> None:
-        self.data = data
-        self.targets = targets
         self.config = config
         self.rng = np.random.default_rng()
         self.forest: list[ID3Tree | CARTTree] = []
 
-    def build(self, n_jobs: int | None = None) -> None:
+    def fit(
+        self,
+        data: np.ndarray,
+        targets: np.ndarray,
+        n_jobs: int | None = None,
+    ) -> None:
         if n_jobs is None:
             n_jobs = os.cpu_count() or 1
 
         seeds = self.rng.integers(0, 2**32 - 1, size=self.config.num_of_trees)
 
-        args = [(self.data, self.targets, self.config, int(seed)) for seed in seeds]
+        args = [(data, targets, self.config, int(seed)) for seed in seeds]
 
         with ProcessPoolExecutor(max_workers=n_jobs) as ex:
             self.forest = list(ex.map(_build_single_tree, args))

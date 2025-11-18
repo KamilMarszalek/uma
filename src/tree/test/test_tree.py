@@ -2,7 +2,7 @@ import numpy as np
 
 from src.tree.config import ID3Config
 from src.tree.eval_func import InformationGain
-from src.tree.tree import ID3Tree
+from src.tree.cart_tree import ID3Tree
 
 
 def test_tree_single_label():
@@ -14,7 +14,12 @@ def test_tree_single_label():
         tournament_size=2,
     )
 
-    tree = ID3Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(
+        data=data,
+        targets=targets,
+        features=[0],
+    )
     assert tree.root.target == 0
 
 
@@ -27,7 +32,12 @@ def test_tree_max_depth_stops():
         tournament_size=2,
     )
 
-    tree = ID3Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(
+        data=data,
+        targets=targets,
+        features=[0],
+    )
     assert tree.root.target in {0, 1}  # majority or some valid prediction
 
 
@@ -37,11 +47,11 @@ def test_tree_stops_when_no_features():
     tree_config = ID3Config(
         max_depth=5, eval_function=InformationGain(), tournament_size=2
     )
-    tree = ID3Tree(
+    tree = ID3Tree(config=tree_config)
+    tree.fit(
         data=data,
         targets=targets,
         features=[],
-        config=tree_config,
     )
 
     assert tree.root.target == "A"  # majority
@@ -58,7 +68,12 @@ def test_tree_splits_correctly():
         eval_function=InformationGain(),
         tournament_size=2,
     )
-    tree = ID3Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(
+        data=data,
+        targets=targets,
+        features=[0],
+    )
 
     assert tree.root.feature == 0
     assert 0 in tree.root.children
@@ -76,7 +91,12 @@ def test_tree_predict():
         eval_function=InformationGain(),
         tournament_size=2,
     )
-    tree = ID3Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(
+        data=data,
+        targets=targets,
+        features=[0],
+    )
 
     assert tree.predict(np.array([0])) == 0
     assert tree.predict(np.array([1])) == 1
@@ -90,7 +110,13 @@ def make_tree(data, targets, features=None, max_depth=5):
         eval_function=InformationGain(),
         tournament_size=2,
     )
-    return ID3Tree(data, targets, features, config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(
+        data=data,
+        targets=targets,
+        features=features,
+    )
+    return tree
 
 
 def test_tree_handles_mixed_labels():

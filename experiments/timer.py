@@ -5,7 +5,7 @@ from typing import Any
 
 
 class Timer:
-    def __init__(self, func: Callable[[Any], Any], gc_disable: bool = True):
+    def __init__(self, func: Callable[[Any], Any], gc_disable: bool = False):
         self.func = func
         self.gc_disable = gc_disable
         self.elapsed = None

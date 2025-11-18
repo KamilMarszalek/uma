@@ -10,10 +10,8 @@ class ForestLog:
     experiment: str
     forest_type: Literal["CART", "ID3"]
     eval_function: Literal[
-        "ID3_INFORMATION_GAIN",
-        "ID3_GAIN_RATIO",
-        "ID3_GINI_GAIN",
-        "CART_GINI_GAIN"]
+        "ID3_INFORMATION_GAIN", "ID3_GAIN_RATIO", "ID3_GINI_GAIN", "CART_GINI_GAIN"
+    ]
     num_trees: int
     sample_ratio: float
     feature_ratio: float
@@ -52,6 +50,6 @@ def convert_config_to_log(  # noqa: PLR0913
         train_size=config.train_size,
         random_seed=config.random_seed,
         categorial_encoding=cat_endoding_to_string(config.categorial_encoding),
-        time_of_building=time_of_building,
-        accuracy=accuracy,
+        time_of_building=round(time_of_building, 4),
+        accuracy=round(accuracy, 4),
     )

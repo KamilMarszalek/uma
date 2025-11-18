@@ -49,7 +49,7 @@ def convert_config_to_log(
                 "ID3_GINI_GAIN",
                 "CART_GINI_GAIN",
             ],
-            config.forest_config.eval_function,
+            config.forest_config.eval_function.name,
         ),
         num_trees=config.forest_config.num_of_trees,
         sample_ratio=config.forest_config.sample_ratio,

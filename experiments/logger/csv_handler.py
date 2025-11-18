@@ -23,7 +23,6 @@ class CSVHandler(logging.Handler):
                 if is_dataclass(msg_dict) and not isinstance(msg_dict, type):
                     msg_dict = asdict(msg_dict)
                 else:
-                    # jeśli nie da się skonwertować, pomiń lub rzuć wyjątek
                     raise TypeError(f"record.msg must be a dict, got {type(msg_dict)}")
             self.writer.writerow(msg_dict)
             self.file.flush()

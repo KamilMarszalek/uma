@@ -1,5 +1,5 @@
-import logging
 import csv
+import logging
 
 
 class CSVHandler(logging.Handler):

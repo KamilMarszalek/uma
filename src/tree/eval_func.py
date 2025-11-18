@@ -1,10 +1,10 @@
 from collections import Counter
+from enum import Enum
 from typing import Protocol
 
 import numpy as np
 
 from src.tree.get_splits import get_splits
-from enum import Enum
 
 
 def probabilities(targets: np.ndarray) -> np.ndarray:

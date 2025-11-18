@@ -1,6 +1,8 @@
-import time
 import gc
-from typing import Callable, Any
+import time
+from collections.abc import Callable
+from typing import Any
+
 
 class Timer:
     def __init__(self, func: Callable[[Any], Any], gc_disable: bool = True):

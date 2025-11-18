@@ -4,24 +4,7 @@ from typing import Protocol
 import numpy as np
 
 from src.tree.get_splits import get_splits
-
-
-class ID3EvalFunc(Protocol):
-    def __call__(
-        self,
-        data: np.ndarray,
-        targets: np.ndarray,
-        feature: int,
-    ) -> float: ...
-
-
-class CARTEvalFunc(Protocol):
-    def __call__(
-        self,
-        parent: np.ndarray,
-        left: np.ndarray,
-        right: np.ndarray,
-    ) -> float: ...
+from enum import Enum
 
 
 def probabilities(targets: np.ndarray) -> np.ndarray:
@@ -125,3 +108,38 @@ class GainRatio:
         if split_info == 0.0:
             return 0.0
         return float(info_gain / split_info)
+
+
+class ID3EvalFunc(Protocol):
+    def __call__(
+        self,
+        data: np.ndarray,
+        targets: np.ndarray,
+        feature: int,
+    ) -> float: ...
+
+
+class CARTEvalFunc(Protocol):
+    def __call__(
+        self,
+        parent: np.ndarray,
+        left: np.ndarray,
+        right: np.ndarray,
+    ) -> float: ...
+
+
+class ID3EvalEnum(Enum):
+    INFORMATION_GAIN = InformationGain
+    GAIN_RATIO = GainRatio
+    GINI_GAIN = GiniGain
+
+    def __call__(self, *args, **kwargs):
+        return self.value()(*args, **kwargs)
+
+
+class CARTEvalEnum(Enum):
+    CART_GINI_GAIN = CARTGiniGain
+
+    def __call__(self, *args, **kwargs):
+        return self.value()(*args, **kwargs)
+

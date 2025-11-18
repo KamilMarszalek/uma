@@ -3,7 +3,7 @@ from src.data.uci_data_provider import get_uci_data
 from src.forest.config import TournamentForestConfig
 from src.forest.forest import TournamentForest
 from src.tree.config import CARTConfig
-from src.tree.eval_func import CARTGiniGain
+from src.tree.eval_func import CARTEvalEnum
 from src.tree.tree import CARTTree
 
 TRAIN_SIZE = 0.7
@@ -26,7 +26,7 @@ def main() -> None:
         sample_ratio=0.8,
         # feature_ratio=np.sqrt(data_np.shape[1]) / data_np.shape[1],
         feature_ratio=0.8,
-        eval_function=CARTGiniGain(),
+        eval_function=CARTEvalEnum.CART_GINI_GAIN,
         max_depth=10,
         tournament_size=4,
         tree_class=CARTTree,

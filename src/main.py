@@ -12,15 +12,14 @@ RANDOM_SEED = 42
 
 def main() -> None:
     train_data, test_data, train_targets, test_targets = get_uci_data(
-        set_id=2,
+        set_id=222,
         train_size=TRAIN_SIZE,
         random_seed=RANDOM_SEED,
-        cat_encoding_strategy=CatEncodingStrategy.CATEGORICAL,
+        cat_encoding_strategy=CatEncodingStrategy.ONE_HOT,
     )
 
     n_features = train_data.shape[1]
     print(f"Number of features: {n_features}")
-
 
     config = TournamentForestConfig(
         num_of_trees=15,

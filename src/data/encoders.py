@@ -19,7 +19,7 @@ def encode_categorical(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def encode_one_hot(df: pd.DataFrame) -> pd.DataFrame:
-    return pd.get_dummies(df, prefix=df.columns, columns=df.columns)
+    return pd.get_dummies(df, prefix=df.columns, columns=df.columns, dtype=int)
 
 
 class CatEncodingStrategy(Enum):

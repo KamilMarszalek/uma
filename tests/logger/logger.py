@@ -1,0 +1,56 @@
+import logging
+from tests.logger.csv_handler import CSVHandler
+from dataclasses import asdict
+
+
+class ExactLevelFilter(logging.Filter):
+    def __init__(self, level):
+        self.level = level
+    def filter(self, record):
+        return record.levelno == self.level
+
+
+logger = logging.getLogger("TournamentForestLogger")
+DATA_TRACE_LEVEL = 5
+logger.addLevelName(DATA_TRACE_LEVEL, "DATA_TRACE")
+logger.setLevel(DATA_TRACE_LEVEL)
+
+
+def data_trace(self, msg, *args, **kwargs):
+    if self.isEnabledFor(DATA_TRACE_LEVEL):
+        from dataclasses import is_dataclass
+        if is_dataclass(msg):
+            msg = asdict(msg)
+        self._log(DATA_TRACE_LEVEL, msg, args, **kwargs)
+
+logging.Logger.data_trace = data_trace
+
+console_info_handler = logging.StreamHandler()
+console_info_handler.setLevel(logging.INFO)
+console_info_handler.setFormatter(logging.Formatter("%(asctime)s | %(levelname)s | %(message)s"))
+
+data_trace_handler = CSVHandler(
+    "data_trace.csv",
+    fieldnames=[
+        "experiment",
+        "forest_type",
+        "eval_function",
+        "num_trees",
+        "sample_ratio",
+        "feature_ratio",
+        "tree_max_depth",
+        "tree_tournament_size",
+        "set_id",
+        "train_size",
+        "random_seed",
+        "categorial_encoding",
+        "time_of_building",
+        "accuracy",
+        ])
+data_trace_handler.setLevel(DATA_TRACE_LEVEL)
+data_trace_handler.addFilter(ExactLevelFilter(DATA_TRACE_LEVEL))
+
+
+logger.addHandler(console_info_handler)
+logger.addHandler(data_trace_handler)
+

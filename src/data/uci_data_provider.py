@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from experiments.logger.logger import logger
 from ucimlrepo import fetch_ucirepo
 
 from src.data.encoders import (
@@ -19,8 +20,6 @@ def get_uci_data(  # noqa: PLR0913
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     if data is None or targets is None:
         data, targets = download_uci_data(set_id)
-
-    print("Data acquired from UCI repository.")
 
     cat_cols = data.select_dtypes(include=["object", "category"]).columns
     num_cols = data.columns.difference(cat_cols)
@@ -45,9 +44,11 @@ def get_uci_data(  # noqa: PLR0913
     )
 
 
-# 73 is mushroom dataset
 def download_uci_data(set_id: int = 73) -> tuple[pd.DataFrame, pd.DataFrame]:
     dataset = fetch_ucirepo(id=set_id)
     X = dataset.data.features
     Y = dataset.data.targets
+
+    logger.info(f"Downloaded UCI dataset with set_id={set_id}")
+
     return X, Y

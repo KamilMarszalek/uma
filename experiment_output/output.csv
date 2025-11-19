@@ -1,2 +1,17 @@
 experiment,forest_type,eval_function,num_trees,sample_ratio,feature_ratio,tree_max_depth,tree_tournament_size,set_id,train_size,random_seed,categorial_encoding,time_of_building,accuracy
 Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.1073,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.0277,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.0254,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,0.8627,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.1076,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,0.8993,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.0271,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,0.8572,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.0679,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,0.9464,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.0562,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,0.9096,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.2173,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,0.9568,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,1.0113,1.0
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL,0.9265,1.0

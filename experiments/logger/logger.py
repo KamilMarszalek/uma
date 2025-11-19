@@ -44,7 +44,7 @@ console_info_handler.setFormatter(
 )
 
 data_trace_handler = CSVHandler(
-    "data_trace.csv",
+    "experiment_output/output.csv",
     fieldnames=[
         "experiment",
         "forest_type",

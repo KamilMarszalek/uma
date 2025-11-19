@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Literal, cast
 
-from experiments.experiment_config import ExperimentConfig
+from experiments.experiment.experiment_config import ExperimentConfig
 from src.data.encoders import CatEncodingStrategy
 
 

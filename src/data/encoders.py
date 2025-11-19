@@ -23,8 +23,11 @@ def encode_one_hot(df: pd.DataFrame) -> pd.DataFrame:
 
 
 class CatEncodingStrategy(Enum):
-    CATEGORICAL = encode_categorical
-    ONE_HOT = encode_one_hot
+    CATEGORICAL = "categorical"
+    ONE_HOT = "one_hot"
 
     def __call__(self, df: pd.DataFrame) -> pd.DataFrame:
-        return self.value(df)
+        if self is CatEncodingStrategy.CATEGORICAL:
+            return encode_categorical(df)
+        if self is CatEncodingStrategy.ONE_HOT:
+            return encode_one_hot(df)

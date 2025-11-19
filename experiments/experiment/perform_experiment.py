@@ -1,5 +1,5 @@
 import pandas as pd
-from experiments.experiment_config import ExperimentConfig
+from experiments.experiment.experiment_config import ExperimentConfig
 from experiments.logger.forest_log import convert_config_to_log
 from experiments.logger.logger import logger
 from experiments.timer import Timer

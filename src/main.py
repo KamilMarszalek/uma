@@ -1,46 +1,21 @@
-from experiments.experiment_config import ExperimentConfig
-from experiments.perform_experiment import perform_experiment
+import argparse
 
-from src.data.encoders import CatEncodingStrategy
-from src.data.uci_data_provider import download_uci_data
-from src.forest.config import TournamentForestConfig
-from src.tree.cart_tree import TreeClass
-from src.tree.config import TreeConfig
-from src.tree.eval_func import EvalFunction
-
-TRAIN_SIZE = 0.7
-RANDOM_SEED = 42
+from experiments.experiment.parse_experiments import ExperimentParser
 
 
 def main() -> None:
-    data, targets = download_uci_data(set_id=14)
-
-    forest_config = TournamentForestConfig(
-        num_of_trees=15,
-        sample_ratio=0.8,
-        # feature_ratio=np.sqrt(data_np.shape[1]) / data_np.shape[1],
-        feature_ratio=0.8,
-        eval_function=EvalFunction.CART_GINI_GAIN,
-        max_depth=10,
-        tournament_size=4,
-        tree_class=TreeClass.CART,
-        tree_config_class=TreeConfig.CART,
+    parser = argparse.ArgumentParser(
+        description="Run experiments defined in a CSV file."
     )
-
-    experiment_config = ExperimentConfig(
-        experiment_name="Test_Experiment",
-        set_id=14,
-        train_size=TRAIN_SIZE,
-        random_seed=RANDOM_SEED,
-        categorial_encoding=CatEncodingStrategy.CATEGORICAL,
-        forest_config=forest_config,
+    parser.add_argument(
+        "source_file",
+        type=str,
+        help="Path to the CSV file containing experiment configurations.",
     )
+    args = parser.parse_args()
 
-    perform_experiment(
-        config=experiment_config,
-        data=data,
-        targets=targets,
-    )
+    experiment_parser = ExperimentParser(source_file=args.source_file)
+    experiment_parser.perform_experiments()
 
 
 if __name__ == "__main__":

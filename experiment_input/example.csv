@@ -1,0 +1,3 @@
+experiment,forest_type,eval_function,num_trees,sample_ratio,feature_ratio,tree_max_depth,tree_tournament_size,set_id,train_size,random_seed,categorial_encoding
+Test_experiment_from_parser,CART,CART_GINI_GAIN,15,0.8,0.8,10,4,73,0.7,42,CATEGORICAL
+

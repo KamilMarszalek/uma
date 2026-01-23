@@ -1,5 +1,4 @@
 import os
-from collections import Counter
 from concurrent.futures import ProcessPoolExecutor
 from typing import Any
 
@@ -68,5 +67,9 @@ class TournamentForest:
             self.forest = list(ex.map(_build_single_tree, args))
 
     def predict(self, sample: np.ndarray) -> Any:
-        predictions = [t.predict(sample) for t in self.forest]
-        return Counter(predictions).most_common(1)[0][0]
+        predictions = np.fromiter(
+            (t.predict(sample) for t in self.forest),
+            dtype=object,
+        )
+        values, counts = np.unique(predictions, return_counts=True)
+        return values[int(np.argmax(counts))]

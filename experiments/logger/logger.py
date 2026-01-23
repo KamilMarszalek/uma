@@ -54,6 +54,7 @@ data_trace_handler = CSVHandler(
         "feature_ratio",
         "tree_max_depth",
         "tree_tournament_size",
+        "min_samples_split",
         "set_id",
         "train_size",
         "random_seed",

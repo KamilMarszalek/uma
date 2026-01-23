@@ -9,15 +9,21 @@ from src.data.encoders import CatEncodingStrategy
 @dataclass
 class ForestLog:
     experiment: str
-    forest_type: Literal["CART", "ID3"]
+    forest_type: Literal["CART", "ID3", "SKLEARN"]
     eval_function: Literal[
-        "ID3_INFORMATION_GAIN", "ID3_GAIN_RATIO", "ID3_GINI_GAIN", "CART_GINI_GAIN"
+        "ID3_INFORMATION_GAIN",
+        "ID3_GAIN_RATIO",
+        "ID3_GINI_GAIN",
+        "CART_GINI_GAIN",
+        "SKLEARN_ENTROPY",
+        "SKLEARN_GINI",
     ]
     num_trees: int
     sample_ratio: float
     feature_ratio: float
     tree_max_depth: int
     tree_tournament_size: int
+    min_samples_split: int
     set_id: int
     train_size: float
     random_seed: int
@@ -47,13 +53,17 @@ def convert_config_to_log(
 ) -> ForestLog:
     return ForestLog(
         experiment=config.experiment_name,
-        forest_type=cast(Literal["CART", "ID3"], config.forest_config.tree_class.name),
+        forest_type=cast(
+            Literal["CART", "ID3", "SKLEARN"], config.forest_config.tree_class.name
+        ),
         eval_function=cast(
             Literal[
                 "ID3_INFORMATION_GAIN",
                 "ID3_GAIN_RATIO",
                 "ID3_GINI_GAIN",
                 "CART_GINI_GAIN",
+                "SKLEARN_ENTROPY",
+                "SKLEARN_GINI",
             ],
             config.forest_config.eval_function.name,
         ),
@@ -64,6 +74,7 @@ def convert_config_to_log(
         if config.forest_config.max_depth is not None
         else -1,
         tree_tournament_size=config.forest_config.tournament_size,
+        min_samples_split=config.forest_config.min_samples_split,
         set_id=config.set_id,
         train_size=config.train_size,
         random_seed=config.forest_config.random_seed,

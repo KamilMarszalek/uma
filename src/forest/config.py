@@ -14,5 +14,6 @@ class TournamentForestConfig:
     tree_config_class: TreeConfig
     max_depth: int | None = None
     tournament_size: int = 2
+    min_samples_split: int = 2
     eval_function: EvalFunction = EvalFunction.ID3_INFORMATION_GAIN
     random_seed: int = 42

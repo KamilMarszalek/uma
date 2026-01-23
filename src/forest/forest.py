@@ -26,11 +26,7 @@ def _build_single_tree(
     k = max(1, int(cols * config.feature_ratio))
     feature_boot = list(rng.choice(cols, size=k, replace=False))
 
-    tree_config = config.tree_config_class(
-        max_depth=config.max_depth,
-        eval_function=config.eval_function,
-        tournament_size=config.tournament_size,
-    )
+    tree_config = config.tree_config_class(config)
 
     tree = config.tree_class(
         config=tree_config,

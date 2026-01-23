@@ -128,6 +128,11 @@ class CARTEvalFunc(Protocol):
     ) -> float: ...
 
 
+class SKLearnEvalFuncEnum(Enum):
+    SKLEARN_ENTROPY = "entropy"
+    SKLEARN_GINI = "gini"
+
+
 class EvalFunction(Enum):
     # ID3
     ID3_INFORMATION_GAIN = InformationGain
@@ -137,5 +142,10 @@ class EvalFunction(Enum):
     # CART
     CART_GINI_GAIN = CARTGiniGain
 
+    SKLEARN_ENTROPY = "entropy"
+    SKLEARN_GINI = "gini"
+
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
+        if isinstance(self.value, str):
+            return self.value
         return self.value()(*args, **kwargs)

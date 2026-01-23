@@ -35,6 +35,7 @@ class ExperimentParser:
                         eval_function=EvalFunction[row["eval_function"]],
                         max_depth=int(row["tree_max_depth"]),
                         tournament_size=int(row["tree_tournament_size"]),
+                        min_samples_split=int(row["min_samples_split"]),
                         tree_class=TreeClass[row["forest_type"]],
                         tree_config_class=TreeConfig[row["forest_type"]],
                         random_seed=int(row["base_random_seed"]),

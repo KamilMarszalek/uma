@@ -28,7 +28,7 @@ class CARTTree(BaseTree):
             data,
             targets,
             features,
-            remaining_depth=None,
+            remaining_depth=self.max_depth,
         )
 
     def predict(self, sample: np.ndarray) -> Any:
@@ -114,7 +114,7 @@ class CARTTree(BaseTree):
         data: np.ndarray,
         targets: np.ndarray,
         features: list[int],
-        remaining_depth: int | None,
+        remaining_depth: int | None = None,
     ) -> Node:
         stop = self.check_stop_condition(
             targets,

@@ -43,33 +43,44 @@ console_info_handler.setFormatter(
     logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 )
 
-data_trace_handler = CSVHandler(
-    "experiment_output/output.csv",
-    fieldnames=[
-        "experiment",
-        "forest_type",
-        "eval_function",
-        "num_trees",
-        "sample_ratio",
-        "feature_ratio",
-        "tree_max_depth",
-        "tree_tournament_size",
-        "min_samples_split",
-        "set_id",
-        "train_size",
-        "random_seed",
-        "categorial_encoding",
-        "time_of_building",
-        "accuracy",
-        "TP",
-        "TN",
-        "FP",
-        "FN",
-    ],
-)
-data_trace_handler.setLevel(DATA_TRACE_LEVEL)
-data_trace_handler.addFilter(ExactLevelFilter(DATA_TRACE_LEVEL))
-
-
 logger.addHandler(console_info_handler)
-logger.addHandler(data_trace_handler)
+
+
+def setup_experiment_csv(experiment_name: str) -> CSVHandler:
+    file_path = f"experiment_output/{experiment_name}.csv"
+
+    handler = CSVHandler(
+        file_path,
+        fieldnames=[
+            "experiment",
+            "forest_type",
+            "eval_function",
+            "num_trees",
+            "sample_ratio",
+            "feature_ratio",
+            "tree_max_depth",
+            "tree_tournament_size",
+            "min_samples_split",
+            "set_id",
+            "train_size",
+            "random_seed",
+            "categorial_encoding",
+            "time_of_building",
+            "accuracy",
+            "TP",
+            "TN",
+            "FP",
+            "FN",
+        ],
+    )
+    handler.setLevel(DATA_TRACE_LEVEL)
+    handler.addFilter(ExactLevelFilter(DATA_TRACE_LEVEL))
+
+    # Usuwamy stare handlery CSV, aby nie pisać do kilku plików naraz
+    for h in logger.handlers[:]:
+        if isinstance(h, CSVHandler):
+            logger.removeHandler(h)
+            h.close()
+
+    logger.addHandler(handler)
+    return handler

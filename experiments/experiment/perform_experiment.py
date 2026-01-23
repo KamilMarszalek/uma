@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from experiments.experiment.experiment_config import ExperimentConfig
 from experiments.logger.forest_log import convert_config_to_log
-from experiments.logger.logger import logger
+from experiments.logger.logger import logger, setup_experiment_csv
 from experiments.timer import Timer
 from src.data.uci_data_provider import get_uci_data
 from src.forest.forest import TournamentForest
@@ -50,6 +50,7 @@ def perform_experiment(
         f"Time of building={time_of_building:.4f} seconds."
     )
 
+    setup_experiment_csv(config.experiment_name)
     logger.data_trace(
         convert_config_to_log(
             config=config,

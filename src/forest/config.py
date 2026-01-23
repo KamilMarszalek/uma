@@ -1,8 +1,8 @@
 from dataclasses import dataclass
 
-from src.tree.cart_tree import TreeClass
 from src.tree.config import TreeConfig
 from src.tree.eval_func import EvalFunction
+from src.tree.tree_class import TreeClass
 
 
 @dataclass

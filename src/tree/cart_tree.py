@@ -1,11 +1,9 @@
-from enum import Enum
 from typing import Any
 
 import numpy as np
 
 from src.tree.base_tree import BaseTree
 from src.tree.config import CARTConfig
-from src.tree.id3_tree import ID3Tree
 from src.tree.node import Node
 
 
@@ -153,11 +151,3 @@ class CARTTree(BaseTree):
             children=children,
             default_label=BaseTree.most_common_label(targets),
         )
-
-
-class TreeClass(Enum):
-    ID3 = ID3Tree
-    CART = CARTTree
-
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
-        return self.value(*args, **kwargs)

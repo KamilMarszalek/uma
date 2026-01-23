@@ -7,9 +7,9 @@ from experiments.experiment.perform_experiment import perform_experiment
 from src.data.encoders import CatEncodingStrategy
 from src.data.uci_data_provider import download_uci_data
 from src.forest.config import TournamentForestConfig
-from src.tree.cart_tree import TreeClass
 from src.tree.config import TreeConfig
 from src.tree.eval_func import EvalFunction
+from src.tree.tree_class import TreeClass
 
 
 class ExperimentParser:

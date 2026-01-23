@@ -42,6 +42,13 @@ class ExperimentParser:
                 )
                 times_repeat = int(row.get("times_repeat", 1))
 
+                # No max depth is represented by non-positive values
+                if (
+                    experiment_config.forest_config.max_depth
+                    and experiment_config.forest_config.max_depth <= 0
+                ):
+                    experiment_config.forest_config.max_depth = None
+
                 for i in range(times_repeat):
                     cfg = copy.deepcopy(experiment_config)
                     cfg.forest_config.random_seed = (

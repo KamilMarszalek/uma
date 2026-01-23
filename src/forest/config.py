@@ -12,7 +12,7 @@ class TournamentForestConfig:
     feature_ratio: float
     tree_class: TreeClass
     tree_config_class: TreeConfig
-    max_depth: int = 5
+    max_depth: int | None = None
     tournament_size: int = 2
     eval_function: EvalFunction = EvalFunction.ID3_INFORMATION_GAIN
     random_seed: int = 42

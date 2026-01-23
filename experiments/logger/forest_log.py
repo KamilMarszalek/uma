@@ -60,7 +60,9 @@ def convert_config_to_log(
         num_trees=config.forest_config.num_of_trees,
         sample_ratio=config.forest_config.sample_ratio,
         feature_ratio=config.forest_config.feature_ratio,
-        tree_max_depth=config.forest_config.max_depth,
+        tree_max_depth=config.forest_config.max_depth
+        if config.forest_config.max_depth is not None
+        else -1,
         tree_tournament_size=config.forest_config.tournament_size,
         set_id=config.set_id,
         train_size=config.train_size,

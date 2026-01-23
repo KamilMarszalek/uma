@@ -1,3 +1,4 @@
+import copy
 import csv
 
 import pandas as pd
@@ -26,7 +27,6 @@ class ExperimentParser:
                     experiment_name=row["experiment"],
                     set_id=int(row["set_id"]),
                     train_size=float(row["train_size"]),
-                    random_seed=int(row["random_seed"]),
                     categorial_encoding=CatEncodingStrategy[row["categorial_encoding"]],
                     forest_config=TournamentForestConfig(
                         num_of_trees=int(row["num_trees"]),
@@ -37,12 +37,17 @@ class ExperimentParser:
                         tournament_size=int(row["tree_tournament_size"]),
                         tree_class=TreeClass[row["forest_type"]],
                         tree_config_class=TreeConfig[row["forest_type"]],
+                        random_seed=int(row["base_random_seed"]),
                     ),
                 )
                 times_repeat = int(row.get("times_repeat", 1))
 
-                for _ in range(times_repeat):
-                    self.configs.append(experiment_config)
+                for i in range(times_repeat):
+                    cfg = copy.deepcopy(experiment_config)
+                    cfg.forest_config.random_seed = (
+                        experiment_config.forest_config.random_seed + i
+                    )
+                    self.configs.append(cfg)
 
     def sort_configs(self) -> None:
         self.configs.sort(key=lambda config: config.set_id)

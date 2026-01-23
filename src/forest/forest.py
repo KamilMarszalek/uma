@@ -52,7 +52,7 @@ class TournamentForest:
         config: TournamentForestConfig,
     ) -> None:
         self.config = config
-        self.rng = np.random.default_rng()
+        self.rng = np.random.default_rng(config.random_seed)
         self.forest: list[ID3Tree | CARTTree] = []
 
     def fit(

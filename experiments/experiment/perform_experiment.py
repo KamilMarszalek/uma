@@ -18,7 +18,7 @@ def perform_experiment(
     train_data, test_data, train_targets, test_targets = get_uci_data(
         set_id=config.set_id,
         train_size=config.train_size,
-        random_seed=config.random_seed,
+        random_seed=config.forest_config.random_seed,
         encode=config.categorial_encoding,
         data=data,
         targets=targets,

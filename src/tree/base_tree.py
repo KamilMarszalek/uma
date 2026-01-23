@@ -8,8 +8,8 @@ from src.tree.node import Node
 
 
 class BaseTree(ABC):
-    def __init__(self) -> None:
-        self.rng = np.random.default_rng()
+    def __init__(self, random_seed: int = 42) -> None:
+        self.rng = np.random.default_rng(random_seed)
         self.root: Node | None = None
 
     @abstractmethod

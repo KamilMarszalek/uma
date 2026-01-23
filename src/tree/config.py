@@ -10,6 +10,7 @@ class ID3Config:
     eval_function: ID3EvalFunc = EvalFunction.ID3_INFORMATION_GAIN
     max_depth: int = 5
     tournament_size: int = 2
+    random_seed: int = 42
 
 
 @dataclass
@@ -18,6 +19,7 @@ class CARTConfig:
     min_samples_split: int = 2
     tournament_size: int = 2
     eval_function: CARTEvalFunc = EvalFunction.CART_GINI_GAIN
+    random_seed: int = 42
 
 
 class TreeConfig(Enum):

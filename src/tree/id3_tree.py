@@ -13,7 +13,7 @@ class ID3Tree(BaseTree):
         self,
         config: ID3Config,
     ) -> None:
-        super().__init__()
+        super().__init__(config.random_seed)
         self.eval_function = config.eval_function
         self.tournament_size = config.tournament_size
 

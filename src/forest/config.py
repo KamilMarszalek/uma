@@ -15,3 +15,4 @@ class TournamentForestConfig:
     max_depth: int = 5
     tournament_size: int = 2
     eval_function: EvalFunction = EvalFunction.ID3_INFORMATION_GAIN
+    random_seed: int = 42

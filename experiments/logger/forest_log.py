@@ -58,7 +58,7 @@ def convert_config_to_log(
         tree_tournament_size=config.forest_config.tournament_size,
         set_id=config.set_id,
         train_size=config.train_size,
-        random_seed=config.random_seed,
+        random_seed=config.forest_config.random_seed,
         categorial_encoding=cast(
             Literal["ONE_HOT", "CATEGORICAL"],
             cat_endoding_to_string(config.categorial_encoding),

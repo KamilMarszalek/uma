@@ -14,7 +14,7 @@ class CARTTree(BaseTree):
         self,
         config: CARTConfig,
     ) -> None:
-        super().__init__()
+        super().__init__(config.random_seed)
         self.max_depth = config.max_depth
         self.min_samples_split = config.min_samples_split
         self.tournament_size = config.tournament_size

@@ -125,6 +125,7 @@ class TableBuilder:
             label=self.label,
             position="htbp",
             escape=False if needs_raw_latex else self.escape,
+            decimal=",",
         )
         latex_str = self._inject_table_style(latex_str)
         latex_str = self._inject_header_hline(latex_str)

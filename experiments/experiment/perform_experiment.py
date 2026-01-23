@@ -31,18 +31,12 @@ def perform_experiment(
     timer.run(train_data, train_targets)
     time_of_building = timer.get_elapsed()
 
+    y_pred_all = forest.predict(test_data)
+    correct = np.sum(y_pred_all == test_targets)
+    accuracy = correct / test_targets.size
     num_classes = np.unique(test_targets).size
     conf_matrix = np.zeros((num_classes, num_classes), dtype=int)
-    correct = 0
-    for x, y_true in zip(test_data, test_targets, strict=True):
-        y_pred = forest.predict(x)
-
-        conf_matrix[y_true, y_pred] += 1
-
-        if y_pred == y_true:
-            correct += 1
-
-    accuracy = correct / test_data.shape[0]
+    np.add.at(conf_matrix, (test_targets, y_pred_all), 1)
 
     logger.info(
         f"Experiment {config.experiment_name} completed: "

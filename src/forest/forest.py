@@ -67,9 +67,20 @@ class TournamentForest:
             self.forest = list(ex.map(_build_single_tree, args))
 
     def predict(self, sample: np.ndarray) -> Any:
+        sample = np.asarray(sample)
+        if sample.ndim == 1:
+            return self._predict_one(sample)
+        return np.fromiter(
+            (self._predict_one(row) for row in sample),
+            dtype=object,
+            count=sample.shape[0],
+        )
+
+    def _predict_one(self, sample: np.ndarray) -> Any:
         predictions = np.fromiter(
             (t.predict(sample) for t in self.forest),
             dtype=object,
+            count=len(self.forest),
         )
         values, counts = np.unique(predictions, return_counts=True)
         return values[int(np.argmax(counts))]

@@ -32,11 +32,17 @@ def perform_experiment(
     time_of_building = timer.get_elapsed()
 
     y_pred_all = forest.predict(test_data)
-    correct = np.sum(y_pred_all == test_targets)
-    accuracy = correct / test_targets.size
-    num_classes = np.unique(test_targets).size
-    conf_matrix = np.zeros((num_classes, num_classes), dtype=int)
-    np.add.at(conf_matrix, (test_targets, y_pred_all), 1)
+    y_true = np.asarray(test_targets).ravel()
+    y_pred = np.asarray(y_pred_all).ravel()
+    correct = np.sum(y_pred == y_true)
+    accuracy = correct / y_true.size
+
+    labels = np.unique(np.concatenate([y_true, y_pred]))
+    label_to_index = {label: idx for idx, label in enumerate(labels)}
+    y_true_idx = np.array([label_to_index[label] for label in y_true], dtype=int)
+    y_pred_idx = np.array([label_to_index[label] for label in y_pred], dtype=int)
+    conf_matrix = np.zeros((labels.size, labels.size), dtype=int)
+    np.add.at(conf_matrix, (y_true_idx, y_pred_idx), 1)
 
     logger.info(
         f"Experiment {config.experiment_name} completed: "

@@ -37,3 +37,8 @@ def plot_line_chart(
         plt.show()
 
     plt.close()
+
+
+if __name__ == "__main__":
+    # TODO: generate plots from our csv result files
+    pass

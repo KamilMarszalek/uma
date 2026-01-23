@@ -59,8 +59,13 @@ class CARTTree(BaseTree):
         return None
 
     def tournament_selection(
-        self, data: np.ndarray, targets: np.ndarray, features: list[int]
+        self,
+        data: np.ndarray,
+        targets: np.ndarray,
+        features: list[int],
     ) -> tuple[int | None, float | None]:
+        parent_total = targets.size
+        parent_pos = int(targets.sum())
         candidates = list(
             set(
                 self.rng.choice(
@@ -70,44 +75,55 @@ class CARTTree(BaseTree):
                 )
             )
         )
-
         best_feature = None
         best_thr = None
         best_gain = -np.inf
-
         for feature in candidates:
-            thr, gain = self.find_best_threshold(data[:, feature], targets)
+            thr, gain = self.find_best_threshold(
+                data[:, feature],
+                targets,
+                parent_pos=parent_pos,
+                parent_total=parent_total,
+            )
             if gain > best_gain:
                 best_gain = gain
                 best_thr = thr
                 best_feature = feature
-
         return best_feature, best_thr
 
     def find_best_threshold(
-        self, col: np.ndarray, targets: np.ndarray
+        self,
+        col: np.ndarray,
+        targets: np.ndarray,
+        *,
+        parent_pos: int,
+        parent_total: int,
     ) -> tuple[float | None, float]:
-        values = np.unique(col)
-        if values.size <= 1:
+        if parent_total <= 1:
             return None, -np.inf
-
-        values.sort()
-        thresholds = (values[:-1] + values[1:]) / 2
-
-        best_gain = -np.inf
-        best_thr = None
-
-        for thr in thresholds:
-            left = targets[col <= thr]
-            right = targets[col > thr]
-
-            gain = self.eval_function(targets, left, right)
-
-            if gain > best_gain:
-                best_gain = gain
-                best_thr = thr
-
-        return best_thr, best_gain
+        sorted_indices = np.argsort(col, kind="mergesort")
+        sorted_col = col[sorted_indices]
+        sorted_targets = targets[sorted_indices]
+        different_values = sorted_col[1:] != sorted_col[:-1]
+        split_pos = np.nonzero(different_values)[0]
+        if split_pos.size == 0:
+            return None, -np.inf
+        pos_cum = np.cumsum(sorted_targets, dtype=np.int32)
+        left_total = (split_pos + 1).astype(np.int32)
+        left_pos = pos_cum[split_pos].astype(np.int32)
+        gains = self.eval_function(
+            parent_pos=parent_pos,
+            parent_total=parent_total,
+            left_pos=left_pos,
+            left_total=left_total,
+        )
+        best_index = int(np.argmax(gains))
+        indices = int(split_pos[best_index])
+        threshold = float(
+            (sorted_col[indices] + sorted_col[indices + 1]) / 2.0,
+        )
+        best_gain = float(gains[best_index])
+        return threshold, best_gain
 
     def build_tree(
         self,

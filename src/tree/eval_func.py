@@ -66,23 +66,27 @@ class GiniGain:
 
 class CARTGiniGain:
     def __call__(
-        self, parent: np.ndarray, left: np.ndarray, right: np.ndarray
-    ) -> float:
-        def gini(x: np.ndarray) -> float:
-            if x.size == 0:
-                return 0.0
-            probs = np.array(list(Counter(x).values())) / x.size
-            return float(1.0 - np.sum(probs**2))
-
-        total = parent.size
-        if total == 0:
-            return 0.0
-        left_g = gini(left)
-        right_g = gini(right)
-
-        weighted = (left.size / total) * left_g + (right.size / total) * right_g
-
-        return float(gini(parent) - weighted)
+        self,
+        *,
+        parent_pos: int,
+        parent_total: int,
+        left_pos: np.ndarray,
+        left_total: np.ndarray,
+    ) -> np.ndarray:
+        p_parent = parent_pos / parent_total if parent_total else 0.0
+        g_parent = 2.0 * p_parent * (1.0 - p_parent)
+        right_total = parent_total - left_total
+        right_pos = parent_pos - left_pos
+        left_total = left_total.astype(np.float64)
+        right_total = right_total.astype(np.float64)
+        p_left = left_pos / left_total
+        p_right = right_pos / right_total
+        g_left = 2.0 * p_left * (1.0 - p_left)
+        g_right = 2.0 * p_right * (1.0 - p_right)
+        weighted_gini = (left_total / parent_total) * g_left + (
+            right_total / parent_total
+        ) * g_right
+        return g_parent - weighted_gini
 
 
 class GainRatio:
@@ -122,10 +126,12 @@ class ID3EvalFunc(Protocol):
 class CARTEvalFunc(Protocol):
     def __call__(
         self,
-        parent: np.ndarray,
-        left: np.ndarray,
-        right: np.ndarray,
-    ) -> float: ...
+        *,
+        parent_pos: int,
+        parent_total: int,
+        left_pos: np.ndarray,
+        left_total: np.ndarray,
+    ) -> np.ndarray: ...
 
 
 class SKLearnEvalFuncEnum(Enum):

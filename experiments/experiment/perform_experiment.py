@@ -38,9 +38,8 @@ def perform_experiment(
     accuracy = correct / y_true.size
 
     labels = np.unique(np.concatenate([y_true, y_pred]))
-    label_to_index = {label: idx for idx, label in enumerate(labels)}
-    y_true_idx = np.array([label_to_index[label] for label in y_true], dtype=int)
-    y_pred_idx = np.array([label_to_index[label] for label in y_pred], dtype=int)
+    y_true_idx = np.searchsorted(labels, y_true)
+    y_pred_idx = np.searchsorted(labels, y_pred)
     conf_matrix = np.zeros((labels.size, labels.size), dtype=int)
     np.add.at(conf_matrix, (y_true_idx, y_pred_idx), 1)
 

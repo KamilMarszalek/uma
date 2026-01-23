@@ -60,6 +60,10 @@ data_trace_handler = CSVHandler(
         "categorial_encoding",
         "time_of_building",
         "accuracy",
+        "TP",
+        "TN",
+        "FP",
+        "FN",
     ],
 )
 data_trace_handler.setLevel(DATA_TRACE_LEVEL)

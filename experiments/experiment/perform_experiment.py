@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from experiments.experiment.experiment_config import ExperimentConfig
 from experiments.logger.forest_log import convert_config_to_log
@@ -30,9 +31,14 @@ def perform_experiment(
     timer.run(train_data, train_targets)
     time_of_building = timer.get_elapsed()
 
+    num_classes = np.unique(test_targets).size
+    conf_matrix = np.zeros((num_classes, num_classes), dtype=int)
     correct = 0
     for x, y_true in zip(test_data, test_targets, strict=True):
         y_pred = forest.predict(x)
+
+        conf_matrix[y_true, y_pred] += 1
+
         if y_pred == y_true:
             correct += 1
 
@@ -49,6 +55,7 @@ def perform_experiment(
             config=config,
             time_of_building=time_of_building,
             accuracy=accuracy,
+            confusion_matrix=conf_matrix,
         )
     )
 

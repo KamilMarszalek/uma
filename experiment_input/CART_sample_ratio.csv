@@ -1,0 +1,16 @@
+experiment,forest_type,eval_function,num_trees,sample_ratio,feature_ratio,tree_max_depth,tree_tournament_size,min_samples_split,set_id,train_size,base_random_seed,categorial_encoding,times_repeat
+CART_sample_ratio_73,CART,CART_GINI_GAIN,100,0.2,1.0,-1,2,2,73,0.7,42,ONE_HOT,25
+CART_sample_ratio_73,CART,CART_GINI_GAIN,100,0.4,1.0,-1,2,2,73,0.7,42,ONE_HOT,25
+CART_sample_ratio_73,CART,CART_GINI_GAIN,100,0.6,1.0,-1,2,2,73,0.7,42,ONE_HOT,25
+CART_sample_ratio_73,CART,CART_GINI_GAIN,100,0.8,1.0,-1,2,2,73,0.7,42,ONE_HOT,25
+CART_sample_ratio_73,CART,CART_GINI_GAIN,100,1.0,1.0,-1,2,2,73,0.7,42,ONE_HOT,25
+CART_sample_ratio_2,CART,CART_GINI_GAIN,100,0.2,1.0,-1,2,2,2,0.7,42,ONE_HOT,25
+CART_sample_ratio_2,CART,CART_GINI_GAIN,100,0.4,1.0,-1,2,2,2,0.7,42,ONE_HOT,25
+CART_sample_ratio_2,CART,CART_GINI_GAIN,100,0.6,1.0,-1,2,2,2,0.7,42,ONE_HOT,25
+CART_sample_ratio_2,CART,CART_GINI_GAIN,100,0.8,1.0,-1,2,2,2,0.7,42,ONE_HOT,25
+CART_sample_ratio_2,CART,CART_GINI_GAIN,100,1.0,1.0,-1,2,2,2,0.7,42,ONE_HOT,25
+CART_sample_ratio_222,CART,CART_GINI_GAIN,100,0.2,1.0,-1,2,2,222,0.7,42,ONE_HOT,25
+CART_sample_ratio_222,CART,CART_GINI_GAIN,100,0.4,1.0,-1,2,2,222,0.7,42,ONE_HOT,25
+CART_sample_ratio_222,CART,CART_GINI_GAIN,100,0.6,1.0,-1,2,2,222,0.7,42,ONE_HOT,25
+CART_sample_ratio_222,CART,CART_GINI_GAIN,100,0.8,1.0,-1,2,2,222,0.7,42,ONE_HOT,25
+CART_sample_ratio_222,CART,CART_GINI_GAIN,100,1.0,1.0,-1,2,2,222,0.7,42,ONE_HOT,25

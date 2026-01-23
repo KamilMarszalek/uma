@@ -1,0 +1,10 @@
+experiment,forest_type,eval_function,num_trees,sample_ratio,feature_ratio,tree_max_depth,tree_tournament_size,min_samples_split,set_id,train_size,base_random_seed,categorial_encoding,times_repeat
+ID3_eval_function_73,ID3,ID3_INFORMATION_GAIN,100,1.0,1.0,-1,2,2,73,0.7,42,CATEGORICAL,25
+ID3_eval_function_73,ID3,ID3_GAIN_RATIO,100,1.0,1.0,-1,2,2,73,0.7,42,CATEGORICAL,25
+ID3_eval_function_73,ID3,ID3_GINI_GAIN,100,1.0,1.0,-1,2,2,73,0.7,42,CATEGORICAL,25
+ID3_eval_function_2,ID3,ID3_INFORMATION_GAIN,100,1.0,1.0,-1,2,2,2,0.7,42,CATEGORICAL,25
+ID3_eval_function_2,ID3,ID3_GAIN_RATIO,100,1.0,1.0,-1,2,2,2,0.7,42,CATEGORICAL,25
+ID3_eval_function_2,ID3,ID3_GINI_GAIN,100,1.0,1.0,-1,2,2,2,0.7,42,CATEGORICAL,25
+ID3_eval_function_222,ID3,ID3_INFORMATION_GAIN,100,1.0,1.0,-1,2,2,222,0.7,42,CATEGORICAL,25
+ID3_eval_function_222,ID3,ID3_GAIN_RATIO,100,1.0,1.0,-1,2,2,222,0.7,42,CATEGORICAL,25
+ID3_eval_function_222,ID3,ID3_GINI_GAIN,100,1.0,1.0,-1,2,2,222,0.7,42,CATEGORICAL,25

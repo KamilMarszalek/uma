@@ -70,11 +70,11 @@ class TournamentForest:
         sample = np.asarray(sample)
         if sample.ndim == 1:
             return self._predict_one(sample)
-        return np.fromiter(
-            (self._predict_one(row) for row in sample),
-            dtype=object,
-            count=sample.shape[0],
+        tree_predictions = np.stack(
+            [t.predict_many(sample) for t in self.forest],
+            axis=0,
         )
+        return self._majority_vote(tree_predictions)
 
     def _predict_one(self, sample: np.ndarray) -> Any:
         predictions = np.fromiter(
@@ -84,3 +84,15 @@ class TournamentForest:
         )
         values, counts = np.unique(predictions, return_counts=True)
         return values[int(np.argmax(counts))]
+
+    @staticmethod
+    def _majority_vote(predictions: np.ndarray) -> np.ndarray:
+        if predictions.size == 0:
+            return np.array([], dtype=object)
+        num_samples = predictions.shape[1]
+        labels, inv = np.unique(predictions, return_inverse=True)
+        inv = inv.reshape(predictions.shape)
+        counts = np.zeros((labels.size, num_samples), dtype=int)
+        sample_idx = np.broadcast_to(np.arange(num_samples), predictions.shape)
+        np.add.at(counts, (inv, sample_idx), 1)
+        return labels[np.argmax(counts, axis=0)]

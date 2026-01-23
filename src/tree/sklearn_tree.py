@@ -6,6 +6,8 @@ from sklearn.tree import DecisionTreeClassifier
 from src.tree.base_tree import BaseTree
 from src.tree.config import SKLearnTreeConfig
 
+NDIM = 2
+
 
 class SklearnTreeWrapper(BaseTree):
     def __init__(self, config: SKLearnTreeConfig) -> None:
@@ -36,3 +38,10 @@ class SklearnTreeWrapper(BaseTree):
         prediction = self.model.predict(sample_subset)
 
         return prediction[0] if prediction.size == 1 else prediction
+
+    def predict_many(self, samples: np.ndarray) -> np.ndarray:
+        samples = np.asarray(samples)
+        if samples.ndim != NDIM:
+            raise ValueError("predict_many expects a 2D array of samples.")
+        sample_subset = samples[:, self.features]
+        return self.model.predict(sample_subset)

@@ -54,8 +54,8 @@ METRIC_LABELS = {
 }
 
 _METRIC_FUNCTIONS = {
-    "precision": lambda tp, fp, fn: precision(tp, fp),
-    "recall": lambda tp, fp, fn: recall(tp, fn),
+    "precision": lambda tp, fp, _: precision(tp, fp),
+    "recall": lambda tp, _, fn: recall(tp, fn),
     "f1": f1_score,
 }
 

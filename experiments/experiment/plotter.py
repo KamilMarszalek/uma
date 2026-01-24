@@ -109,20 +109,20 @@ def _plot_metric(
 
 
 def _plot_metrics_combined(
-    summaries: dict[str, pd.DataFrame],
+    metric_summaries: dict[str, pd.DataFrame],
     spec: CombinedPlotSpec,
 ) -> None:
-    if "accuracy" not in summaries:
+    if "accuracy" not in metric_summaries:
         return
 
-    base = summaries["accuracy"][[spec.param_key]].copy()
+    base = metric_summaries["accuracy"][[spec.param_key]].copy()
     x_labels = base[spec.param_key].astype(str)
 
     _set_plot_style()
     fig, ax = plt.subplots(figsize=(12, 7))
 
     for metric_key in _METRIC_KEYS:
-        summary = summaries.get(metric_key)
+        summary = metric_summaries.get(metric_key)
         if summary is None:
             continue
         aligned = base.merge(summary, on=spec.param_key, how="left")

@@ -132,7 +132,31 @@ def build_metric_summary_from_df(
     )
     if summary is None:
         return None
-    return summary.rename(columns={param_column: param_key})
+    summary = summary.rename(columns={param_column: param_key})
+    return _adjust_param_summary(summary, param_key)
+
+
+def _adjust_param_summary(summary: pd.DataFrame, param_key: str) -> pd.DataFrame:
+    if param_key != "max_depth" or param_key not in summary.columns:
+        return summary
+    summary = summary.copy()
+    values = pd.to_numeric(summary[param_key], errors="coerce")
+    mask = values.eq(-1)
+    if values.notna().any():
+        if (~mask).any():
+            max_value = values[~mask].max()
+        else:
+            max_value = values.max()
+        sort_key = values.where(~mask, max_value + 1)
+        summary = (
+            summary.assign(_sort_key=sort_key)
+            .sort_values("_sort_key")
+            .drop(columns="_sort_key")
+        )
+    if mask.any():
+        summary[param_key] = summary[param_key].astype(object)
+        summary.loc[mask, param_key] = "$\\infty$"
+    return summary.reset_index(drop=True)
 
 
 def _compute_metric_values(

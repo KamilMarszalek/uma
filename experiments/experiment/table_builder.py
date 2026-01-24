@@ -228,7 +228,7 @@ def main() -> None:
             column_lines=True,
             header_hline=True,
             bold_rows=bold_rows,
-            float_format="%.2f",
+            float_format="%.3f",
         )
         table = TableBuilder(summary, table_config)
         table.to_latex(output_dir / f"{csv_path.stem}.tex")
@@ -252,7 +252,7 @@ def main() -> None:
                 column_lines=True,
                 header_hline=True,
                 bold_rows=time_bold_rows,
-                float_format="%.2f",
+                float_format="%.3f",
             )
             time_table = TableBuilder(time_summary, time_table_config)
             time_table.to_latex(output_dir / f"{csv_path.stem}_time.tex")
@@ -277,7 +277,7 @@ def main() -> None:
                 column_lines=True,
                 header_hline=True,
                 bold_rows=metric_bold_rows,
-                float_format="%.2f",
+                float_format="%.3f",
             )
             metric_table = TableBuilder(metric_summary, metric_table_config)
             metric_table.to_latex(output_dir / f"{csv_path.stem}_{metric_key}.tex")

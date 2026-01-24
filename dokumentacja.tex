@@ -19,6 +19,7 @@
 \usepackage{microtype}
 \usepackage[hidelinks]{hyperref}
 \usepackage{booktabs}
+\usepackage{array}
 
 \SetAlgorithmName{Algorytm}{Algorytm}{Spis algorytmów}
 
@@ -35,7 +36,7 @@ Dokumentacja końcowa}
 \maketitle
 
 \section{Treść zadania}
-Zmodyfikowany las losowy w zadaniu klasyfikacji. Podczas budowy każdego z drzew testy (z pełnego zbioru testów) wybieramy za pomocą turnieju: \url{https://staff.elka.pw.edu.pl/~rbiedrzy/UMA/turniejRuletka.pdf}, czyli wybieramy losowo 2 testy, liczymy ich jakość, stosujemy ten z wyższą jakością. Do wstępnych testów polecam zbiór danych z zadaniem klasyfikacji grzybów: \url{https://archive.ics.uci.edu/dataset/73/mushroom}, na którym powinno dać się uzyskać wyniki w okolicy 100\%. Do dalszych testów należy znaleźć i pobrać inne zbiory danych (na na wskazanej stronie lub w Kaggle). Przed rozpoczęciem realizacji projektu proszę zapoznać się z zawartością: \url{https://staff.elka.pw.edu.pl/~rbiedrzy/UMA/index.html}.
+Zmodyfikowany las losowy w zadaniu klasyfikacji. Podczas budowy każdego z drzew testy (z pełnego zbioru testów) wybieramy za pomocą turnieju: \url{https://staff.elka.pw.edu.pl/~rbiedrzy/UMA/turniejRuletka.pdf}, czyli wybieramy losowo 2 testy, liczymy ich jakość, stosujemy ten z wyższą jakością. Do wstępnych testów polecam zbiór danych z zadaniem klasyfikacji grzybów: \url{https://archive.ics.uci.edu/dataset/73/mushroom}, na którym powinno dać się uzyskać wyniki w okolicy 100\%. Do dalszych testów należy znaleźć i pobrać inne zbiory danych (na wskazanej stronie lub w Kaggle). Przed rozpoczęciem realizacji projektu proszę zapoznać się z zawartością: \url{https://staff.elka.pw.edu.pl/~rbiedrzy/UMA/index.html}.
 
 \section{Interpretacja i opis algorytmu}
 
@@ -117,9 +118,9 @@ W dalszej części projektu planujemy użyć:
 
     \begin{description}
         \item[Typ zadania:] klasyfikacja binarna (czy klient zalegnie z płatnością w przyszłym miesiącu?)
-        \item[Liczba przykładów:] \textbf{TODO}
-        \item[Brak zaległości:] \textbf{TODO}
-        \item[Zaległość:] \textbf{TODO}
+        \item[Liczba przykładów:] 30000
+        \item[Brak zaległości:] 23364
+        \item[Zaległość:] 6636
         \item[Liczba atrybutów:] 23
         \item[Typ atrybutów:] ciągłe i dyskretne (liczbowe)
         \item[Uwagi:] Klasy są niezbalansowane. Występuje duża liczba atrybutów ciągłych, co czyni go idealnym do testowania wydajności progów w algorytmie CART. Nie spodziewamy się dokładności 100\%.
@@ -164,9 +165,9 @@ Bazową proporcją dla zbiorów trenującego / testowego będzie 70\% / 30\% -- 
 
 \section{Wybór technologii}
 
-Projekt zostanał zaimplementowany w języku \textbf{Python} z wykorzystaniem bibliotek \textbf{NumPy} oraz \textbf{pandas}, które posłużą odpowiednio do obliczeń numerycznych i przetwarzania danych. W celu oceny jakości proponowanego rozwiązania oraz porównania jego skuteczności, jako punkt odniesienia zostanie wykorzystany klasyczny las losowy z pakietu \textbf{scikit-learn}.
+Projekt został zaimplementowany w języku \textbf{Python} z wykorzystaniem bibliotek \textbf{NumPy} oraz \textbf{pandas}, które posłużą odpowiednio do obliczeń numerycznych i przetwarzania danych. W celu oceny jakości proponowanego rozwiązania oraz porównania jego skuteczności, jako punkt odniesienia zostanie wykorzystany klasyczny las losowy z pakietu \textbf{scikit-learn}.
 
-\section{Metodyka esperymentalna}
+\section{Metodyka eksperymentalna}
 
 Przebieg pojedynczego uruchomienia badania:
 \begin{itemize}
@@ -263,7 +264,7 @@ Miary te są szczególnie istotne przy niezbalansowanych zbiorach (np. Adult, Ba
 Jako domyślne hiperparametry zostały przyjęte:
 \begin{table}[h!]
 \centering
-\caption{Domyślne hiperparametry hiperparametryczne dla modeli leśnych}
+\caption{Domyślne hiperparametry dla modeli leśnych}
 \label{tab:parametry-domyslne}
 \begin{tabular}{|l|c|c|}
 \hline
@@ -281,10 +282,10 @@ Funkcja oceny jakości testu (Gain) & Information Gain & Gini Gain \\ \hline
 
 W jednym badaniu zmieniał się dokładnie \textbf{jeden} sprawdzany hiperparametr.
 
-Dla każdego badania przeanalizowane zostały dokładność, czułośc, precyzja, wynik F1 oraz czas trenowania lasu.
+Dla każdego badania przeanalizowane zostały dokładność, czułość, precyzja, wynik F1 oraz czas trenowania lasu.
 W celu utrzymania przejrzystości dokumentu wyniki zostaną zaprezentowane w postaci zaagregowanych wykresów.
 Wykresy nie są w stanie przedstawić małych różnic w wynikach, jednak ze względu na stochastyczny charakter badanych algorytmów,
-różnice te mogą być uznane za szum statystyczny - z tego powodu dodatkowe tabele nie zostały zawarte w dokumencie.
+różnice te mogą być uznane za szum statystyczny -- z tego powodu dodatkowe tabele nie zostały zawarte w dokumencie.
 
 \subsection{Liczba drzew w lesie}
 
@@ -322,9 +323,10 @@ Sprawdzane wartości zostały ograniczone do maksymalnie 200 drzew ze względu n
 \begin{itemize}
     \item Zbiór 73 - Grzyby
 
-    Drzewa CART radzą sobie gorzej od ID3 - 100\% dokładności osiągają dopiero przy 50 drzewach. Wynika to z oddmiennego sposobu
+    Drzewa CART radzą sobie gorzej od ID3 - 100\% dokładności osiągają dopiero przy 50 drzewach. Wynika to z odmiennego sposobu
     kodowania atrybutów kategorycznych (one-hot encoding), które prowadzi do zwiększenia wymiarowości danych i wpływa na efektywność modelu.
-    Powyżej 50 drzew miary czułości, precyzji i F1-score są delikatnie poprawiane wraz ze wzrostem liczby drzew.
+    Powyżej 50 drzew miary czułości, precyzji i F1-score ulegają nieznacznej poprawie wraz ze wzrostem liczby drzew -- model jest w stanie lepiej
+    radzić sobie z trudniejszymi przykładami.
 
     \begin{figure}[H]
         \centering
@@ -349,7 +351,7 @@ Sprawdzane wartości zostały ograniczone do maksymalnie 200 drzew ze względu n
 
     Obserwacje oraz wnioski są podobne jak dla zbioru 14. Liczba drzew powyżej 50 nie wpływa znacząco na dokładność, jednak
     do tej wartości widoczna jest poprawa precyzji modelu. Warto zauważyć również bardzo niskie poziomy czułości oraz F1-score, które
-    wskazują na trudność zbioru danych. Algorytm ma problem z wykryciem klasy pozytywnej i w znacznej ilości przypadków działa podobnie
+    wskazują na trudność zbioru danych. Algorytm ma problem z wykryciem klasy pozytywnej i w znacznej liczbie przypadków działa podobnie
     jak klasyfikator naiwny zawsze przewidujący klasę negatywną.
 
     \begin{figure}[H]
@@ -384,7 +386,7 @@ Sprawdzane wartości zostały ograniczone do maksymalnie 200 drzew ze względu n
 \subsection{Współczynnik próbkowania zbioru trenującego}
 
 Współczynnik próbkowania określa, jak dużą część zbioru trenującego wykorzystujemy do budowy pojedynczego drzewa w lesie.
-Jego mniejsze wartości zwiększają różnorodnośc drzew, co może prowadzić do redukcji zjawiska przeuczania.
+Jego mniejsze wartości zwiększają różnorodność drzew, co może prowadzić do redukcji zjawiska przeuczania.
 Z drugiej strony przy małych zbiorach danych może prowadzić do niedouczenia poszczególnych drzew.
 
 \subsubsection{ID3}
@@ -585,8 +587,8 @@ Z drugiej strony przy małych zbiorach danych może prowadzić do niedouczenia p
 \begin{itemize}
     \item Zbiór 73 - Grzyby
 
-    W przypadku radzeniem sobie ze zwiększoną liczbą atrybutów (one-hot encoding) większy rozmiar turnieju pozwala na
-    wybór bardziej reprezentatywnych cech podziału, co przekłada się na lepsze wyniki modelu. Zwiększenie szranek pozwala
+    W przypadku radzenia sobie ze zwiększoną liczbą atrybutów (one-hot encoding) większy rozmiar turnieju pozwala na
+    wybór bardziej reprezentatywnych cech podziału, co przekłada się na lepsze wyniki modelu. Zwiększenie rozmiaru turnieju pozwala
     uniknąć zjawiska niedouczenia drzew.
 
     \begin{figure}[H]
@@ -612,7 +614,7 @@ Z drugiej strony przy małych zbiorach danych może prowadzić do niedouczenia p
 
     \item Zbiór 222 - Skuteczność marketingu bankowego
 
-    Obserwacje są podobne jak dla zbioru 14. dodatkowo warto zauważyć, że wraz ze wzrostem rozmiaru turnieju znacząco rośnie czas trenowania lasu.
+    Obserwacje są podobne jak dla zbioru 14. Dodatkowo warto zauważyć, że wraz ze wzrostem rozmiaru turnieju znacząco rośnie czas trenowania lasu.
 
     \begin{figure}[H]
         \centering
@@ -635,7 +637,7 @@ Z drugiej strony przy małych zbiorach danych może prowadzić do niedouczenia p
 
 \subsubsection{Wnioski ogólne}
 \begin{itemize}
-    \item Wzrost liczebności turnieju zazwyczaj nie wpływa znacząco na dokładnośc modelu.
+    \item Wzrost liczebności turnieju zazwyczaj nie wpływa znacząco na dokładność modelu.
     \item Prowadzi jednak do zwiększenia zdolności wykrywania przez model klas mniejszościowych - zwiększenia czułości kosztem precyzji.
     \item Cecha ta może być użyteczna w przypadku zbiorów z niezbalansowanymi klasami w szczególności w pewnych rzeczywistych zastosowaniach,
     na przykład w medycynie, gdzie wykrycie choroby (klasa mniejszościowa) jest ważniejsze niż uniknięcie fałszywych alarmów.
@@ -661,7 +663,7 @@ Dla drzew CART została zaimplementowana tylko jedna taka funkcja, dlatego badan
     \item Zbiór 14 - Nawrót raka piersi
 
     Delikatnie wyróżniła się funkcja \textbf{gain ratio}, dla której wszystkie miary są minimalnie większe. Różnica jest na tyle mała, że może
-    byc to uznane za szum statystyczny, jednak z uwagi na brak innych przesłanek zostanie ona wybrana jako domyślna dla drzew ID3 w porównaniu modeli.
+    być to uznane za szum statystyczny, jednak z uwagi na brak innych przesłanek zostanie ona wybrana jako domyślna dla drzew ID3 w porównaniu modeli.
 
     \begin{figure}[H]
         \centering
@@ -674,12 +676,254 @@ Dla drzew CART została zaimplementowana tylko jedna taka funkcja, dlatego badan
 
 \section{Porównanie modeli}
 
-Przyjęte hiperparametry zostały skorygowane o wyniki z poprzedniego punktu badań. Zastosowane wartości to:
+Przyjęte hiperparametry zostały skorygowane o wyniki z poprzedniego punktu badań - zmienił się jedynie rozmiar turnieju na 3.
+W porównaniu pominięty został trywialny zbiór grzybów. Drzewo ID3 było porównywane jedynie na zbiorze nawrotu raka piersi.
+Lasy ID3 oraz CART stanowią naszą własną implementację z wyborem atrybutów podziału na podstawie turnieju, natomiast
+las SKLEARN to standardowy, niezmodyfikowany las losowy.
 
+\subsection{Zbiór 14 - Nawrót raka piersi}
 
-TABELKA
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\textwidth]{plots/Compare_on_14_compare_metrics.png}
+        \caption{Porównanie modeli dla zbioru 14 - Nawrót raka piersi.}
+        \label{fig:compare_on_14}
+    \end{figure}
+
+    \begin{table}[htbp]
+        \centering
+        \small
+        \setlength{\tabcolsep}{4pt}
+        \renewcommand{\arraystretch}{1.2}
+
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Dokładność} - Typ lasu (zbiór 14)}
+            \label{tab:Compare_on_14_acc}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                \textbf{CART} & \textbf{0,734} & \textbf{0,021} & \textbf{0,793} & \textbf{0,701} \\
+                ID3 & 0,732 & 0,026 & 0,770 & 0,667 \\
+                SKLEARN & 0,726 & 0,028 & 0,782 & 0,678 \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Precyzja} - Typ lasu (zbiór 14)}
+            \label{tab:Compare_on_14_prec}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                \textbf{CART} & \textbf{0,691} & \textbf{0,132} & \textbf{1,000} & \textbf{0,500} \\
+                ID3 & 0,595 & 0,081 & 0,727 & 0,412 \\
+                SKLEARN & 0,561 & 0,070 & 0,667 & 0,429 \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+
+        \vspace{0.5cm}
+
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Czułość} - Typ lasu (zbiór 14)}
+            \label{tab:Compare_on_14_rec}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                CART & 0,214 & 0,084 & 0,423 & 0,077 \\
+                ID3 & 0,348 & 0,080 & 0,462 & 0,154 \\
+                \textbf{SKLEARN} & \textbf{0,363} & \textbf{0,108} & \textbf{0,577} & \textbf{0,115} \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{F1} - Typ lasu (zbiór 14)}
+            \label{tab:Compare_on_14_f1}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                CART & 0,316 & 0,099 & 0,550 & 0,138 \\
+                ID3 & 0,432 & 0,075 & 0,545 & 0,250 \\
+                \textbf{SKLEARN} & \textbf{0,434} & \textbf{0,096} & \textbf{0,612} & \textbf{0,188} \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+    \end{table}
+
+    CART oraz ID3 nieznacznie przewyższają implementację z biblioteki SKLEARN pod względem dokładności. Lepszymi właściwościami charakteryzuje się
+    tutaj las ID3, który stanowi lepszy balans pomiędzy precyzją a czułością, co przekłada się na wyższe wartości F1-score.
+    Na tym zbiorze skorzystanie z wyboru atrybutów podziału węzła na podstawie turnieju okazało się korzystne.
+
+\subsection{Zbiór 222 - Skuteczność marketingu bankowego}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\textwidth]{plots/Compare_on_222_compare_metrics.png}
+        \caption{Porównanie modeli dla zbioru 222 - Skuteczność marketingu bankowego.}
+        \label{fig:compare_on_222}
+    \end{figure}
+
+    \begin{table}[htbp]
+        \centering
+        \small
+        \setlength{\tabcolsep}{4pt}
+        \renewcommand{\arraystretch}{1.2}
+
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Dokładność} - Typ lasu (zbiór 222)}
+            \label{tab:Compare_on_222_acc}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                CART & 0,897 & 0,001 & 0,899 & 0,894 \\
+                \textbf{SKLEARN} & \textbf{0,905} & \textbf{0,002} & \textbf{0,909} & \textbf{0,901} \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Precyzja} - Typ lasu (zbiór 222)}
+            \label{tab:Compare_on_222_prec}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                \textbf{CART} & \textbf{0,765} & \textbf{0,022} & \textbf{0,805} & \textbf{0,704} \\
+                SKLEARN & 0,666 & 0,013 & 0,689 & 0,634 \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+
+        \vspace{0.5cm}
+
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Czułość} - Typ lasu (zbiór 222)}
+            \label{tab:Compare_on_222_rec}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                CART & 0,169 & 0,009 & 0,190 & 0,153 \\
+                \textbf{SKLEARN} & \textbf{0,383} & \textbf{0,013} & \textbf{0,407} & \textbf{0,358} \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{F1} - Typ lasu (zbiór 222)}
+            \label{tab:Compare_on_222_f1}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                CART & 0,276 & 0,012 & 0,305 & 0,255 \\
+                \textbf{SKLEARN} & \textbf{0,486} & \textbf{0,012} & \textbf{0,511} & \textbf{0,458} \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+    \end{table}
+
+    Implementacja lasu CART uzyskała nieco niższą dokładność niż las z biblioteki SKLEARN oraz cechuje się gorszymi właściwościami ogólnymi.
+    Zastosowanie modyfikacji lasu nie jest w tym przypadku uzasadnione.
+
+\subsection{Zbiór 350 - Zaległości płatnicze klientów kart kredytowych}
+
+    \begin{figure}[H]
+        \centering
+        \includegraphics[width=0.9\textwidth]{plots/Compare_on_350_compare_metrics.png}
+        \caption{Porównanie modeli dla zbioru 350 - Zaległości płatnicze klientów kart kredytowych.}
+        \label{fig:compare_on_350}
+    \end{figure}
+
+    \begin{table}[htbp]
+        \centering
+        \small
+        \setlength{\tabcolsep}{4pt}
+        \renewcommand{\arraystretch}{1.2}
+
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Dokładność} - Typ lasu (zbiór 350)}
+            \label{tab:Compare_on_350_acc}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                \textbf{CART} & \textbf{0,818} & \textbf{0,002} & \textbf{0,822} & \textbf{0,816} \\
+                SKLEARN & 0,816 & 0,002 & 0,821 & 0,812 \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Precyzja} - Typ lasu (zbiór 350)}
+            \label{tab:Compare_on_350_prec}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                \textbf{CART} & \textbf{0,666} & \textbf{0,008} & \textbf{0,680} & \textbf{0,650} \\
+                SKLEARN & 0,648 & 0,012 & 0,671 & 0,623 \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+
+        \vspace{0.5cm}
+
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{Czułość} - Typ lasu (zbiór 350)}
+            \label{tab:Compare_on_350_rec}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                CART & 0,361 & 0,008 & 0,377 & 0,346 \\
+                \textbf{SKLEARN} & \textbf{0,373} & \textbf{0,008} & \textbf{0,388} & \textbf{0,353} \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+        \hfill
+        \begin{minipage}[t]{0.48\textwidth}
+            \centering
+            \caption{\textbf{F1} - Typ lasu (zbiór 350)}
+            \label{tab:Compare_on_350_f1}
+            \begin{tabular}{r|r|r|r|r}
+                \toprule
+                Typ lasu & Średnia & Std & Maks & Min \\
+                \hline
+                CART & 0,468 & 0,007 & 0,483 & 0,456 \\
+                \textbf{SKLEARN} & \textbf{0,473} & \textbf{0,007} & \textbf{0,487} & \textbf{0,459} \\
+                \bottomrule
+            \end{tabular}
+        \end{minipage}
+    \end{table}
+
+    Wariant bazowy oraz zmodyfikowany uzyskały bardzo zbliżone do siebie wyniki.
+    Nie da się jednoznacznie wskazać lepszego modelu na tym zbiorze danych.
 
 \section{Wnioski}
+
+Przeprowadzona analiza nie wykazała jednoznacznie, czy modyfikacje lasu losowego w postaci wyboru atrybutów podziału na podstawie turnieju
+przekładają się na poprawę jakości modelu. W przypadku niektórych zbiorów danych mogą one pozwalać na uzyskanie lepszych wyników przez zwiększenie
+różnorodności drzew w lesie, ale również dla danych o innej charakterystyce mogą nie prowadzić do żadnej poprawy, a nawet powodować pogorszenie
+zachowania modelu. Potencjalne zastosowanie tej modyfikacji w praktyce wymagałoby przeprowadzenia analizy na specyficznym zbiorze danych
+przypisanym do danego problemu, aby ocenić jej skuteczność w konkretnym przypadku.
 
 
 \end{document}

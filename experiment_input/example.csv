@@ -2,5 +2,3 @@ experiment,forest_type,eval_function,num_trees,sample_ratio,feature_ratio,tree_m
 Test,ID3,ID3_INFORMATION_GAIN,1,1.0,1.0,-1,2,2,73,0.7,42,CATEGORICAL,1
 Test3,ID3,ID3_GAIN_RATIO,1,1.0,1.0,-1,2,2,73,0.7,42,CATEGORICAL,1
 Test2,ID3,ID3_GINI_GAIN,1,1.0,1.0,-1,2,2,73,0.7,42,CATEGORICAL,1
-
-

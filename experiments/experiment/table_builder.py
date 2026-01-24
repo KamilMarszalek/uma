@@ -180,7 +180,7 @@ _PARAM_COLUMN_MAP = {
     "eval_function": "eval_function",
 }
 
-COLUMN_NAME_MAP = {
+_COLUMN_NAME_MAP = {
     "tree_count": "Liczba drzew",
     "tournament_size": "Rozmiar turnieju",
     "sample_ratio": "Proporcja próbkowania",
@@ -266,7 +266,7 @@ def _build_summary(csv_path: Path) -> pd.DataFrame | None:
         .sort_values(param_column)
         .rename(columns={param_column: param_key})
     )
-    summary = summary.rename(columns=COLUMN_NAME_MAP)
+    summary = summary.rename(columns=_COLUMN_NAME_MAP)
     return summary
 
 
@@ -292,7 +292,7 @@ def _build_time_summary(csv_path: Path) -> pd.DataFrame | None:
         .sort_values(param_column)
         .rename(columns={param_column: param_key})
     )
-    summary = summary.rename(columns=COLUMN_NAME_MAP)
+    summary = summary.rename(columns=_COLUMN_NAME_MAP)
     return summary
 
 
@@ -351,7 +351,7 @@ def _build_metric_summary(
         .sort_values(param_column)
         .rename(columns={param_column: param_key})
     )
-    summary = summary.rename(columns=COLUMN_NAME_MAP)
+    summary = summary.rename(columns=_COLUMN_NAME_MAP)
     return summary
 
 
@@ -376,7 +376,7 @@ def _build_title_from_path(csv_path: Path, metric_key: str | None = None) -> str
         return csv_path.stem
     tree_variant = csv_path.stem.split("_")[0]
     dataset_id = csv_path.stem.split("_")[-1]
-    readable_key = COLUMN_NAME_MAP.get(param_key, param_key)
+    readable_key = _COLUMN_NAME_MAP.get(param_key, param_key)
     return f"{readable_key} na zbiorze {dataset_id} ({tree_variant})"
 
 
@@ -406,7 +406,7 @@ def main() -> None:
         summary = _build_summary(csv_path)
         if summary is None:
             continue
-        bold_rows = _bold_rows_for_mean(summary, COLUMN_NAME_MAP["mean_accuracy"])
+        bold_rows = _bold_rows_for_mean(summary, _COLUMN_NAME_MAP["mean_accuracy"])
         table_config = TableBuilderOptions(
             caption=_build_title_from_path(csv_path),
             label=f"tab:{csv_path.stem}",
@@ -422,7 +422,7 @@ def main() -> None:
         if time_summary is not None:
             time_bold_rows = _bold_rows_for_mean(
                 time_summary,
-                COLUMN_NAME_MAP["mean_time_of_building"],
+                _COLUMN_NAME_MAP["mean_time_of_building"],
                 max_or_min="min",
             )
             time_title = _build_title_from_path(
@@ -446,7 +446,7 @@ def main() -> None:
                 continue
             metric_bold_rows = _bold_rows_for_mean(
                 metric_summary,
-                COLUMN_NAME_MAP[f"mean_{metric_key}"],
+                _COLUMN_NAME_MAP[f"mean_{metric_key}"],
             )
             metric_title = _build_title_from_path(
                 csv_path,

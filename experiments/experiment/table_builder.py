@@ -15,6 +15,7 @@ class TableBuilderOptions:
     column_lines: bool = True
     header_hline: bool = True
     right_align_cells: list[tuple[int, str]] | None = None
+    bold_rows: list[int] | None = None
     float_format: str = "%.2f"
     escape: bool | None = True
 
@@ -32,6 +33,7 @@ class TableBuilder:
         self.column_lines = opts.column_lines
         self.header_hline = opts.header_hline
         self.right_align_cells = opts.right_align_cells or []
+        self.bold_rows = opts.bold_rows or []
         self.float_format = opts.float_format
         self.escape = opts.escape
 
@@ -63,11 +65,20 @@ class TableBuilder:
 
     def _prepare_dataframe(self) -> tuple[pd.DataFrame, bool]:
         df = self.dataframe.copy()
-        needs_raw_latex = bool(self.right_align_cells)
+        needs_raw_latex = bool(self.right_align_cells or self.bold_rows)
         if not needs_raw_latex:
             return df, False
 
-        rename_map = {}
+        df, rename_map, reverse_rename_map = self._rename_for_latex(df)
+        df = self._escape_object_columns(df)
+        self._apply_right_align(df, rename_map)
+        self._apply_bold_rows(df, reverse_rename_map)
+        return df, True
+
+    def _rename_for_latex(
+        self, df: pd.DataFrame
+    ) -> tuple[pd.DataFrame, dict[str, str], dict[str, str]]:
+        rename_map: dict[str, str] = {}
         for col in df.columns:
             if isinstance(col, str):
                 escaped_col = self._escape_underscores(col)
@@ -75,11 +86,18 @@ class TableBuilder:
                     rename_map[col] = escaped_col
         if rename_map:
             df = df.rename(columns=rename_map)
+        reverse_rename_map = {
+            escaped: original for original, escaped in rename_map.items()
+        }
+        return df, rename_map, reverse_rename_map
 
+    def _escape_object_columns(self, df: pd.DataFrame) -> pd.DataFrame:
         for col in df.columns:
             if df[col].dtype == object:
                 df[col] = df[col].map(self._escape_underscores)
+        return df
 
+    def _apply_right_align(self, df: pd.DataFrame, rename_map: dict[str, str]) -> None:
         for row_idx, col_name in self.right_align_cells:
             escaped_col = rename_map.get(col_name, col_name)
             if escaped_col not in df.columns:
@@ -94,7 +112,23 @@ class TableBuilder:
                 f"\\multicolumn{{1}}{{r}}{{{formatted_value}}}"
             )
 
-        return df, True
+    def _apply_bold_rows(
+        self,
+        df: pd.DataFrame,
+        reverse_rename_map: dict[str, str],
+    ) -> None:
+        if not self.bold_rows:
+            return
+        for row_idx in self.bold_rows:
+            if row_idx not in df.index:
+                continue
+            for col in df.columns:
+                original_col = reverse_rename_map.get(col, col)
+                formatted_value = self._escape_underscores(
+                    self._format_cell_value(self.dataframe.at[row_idx, original_col])
+                )
+                df[col] = df[col].astype(object)
+                df.at[row_idx, col] = f"\\textbf{{{formatted_value}}}"
 
     def _inject_table_style(self, latex_str: str) -> str:
         lines = latex_str.splitlines()
@@ -290,6 +324,16 @@ def _build_metric_summary(
     return summary
 
 
+def _bold_rows_for_mean(summary: pd.DataFrame, mean_column: str) -> list[int]:
+    if mean_column not in summary.columns:
+        return []
+    mean_series = summary[mean_column]
+    if mean_series.dropna().empty:
+        return []
+    max_value = mean_series.max()
+    return mean_series[mean_series == max_value].index.tolist()
+
+
 def _build_title_from_path(csv_path: Path, metric_key: str | None = None) -> str:
     param_key = _extract_param_key(csv_path.stem)
     if not param_key:
@@ -297,10 +341,7 @@ def _build_title_from_path(csv_path: Path, metric_key: str | None = None) -> str
     tree_variant = csv_path.stem.split("_")[0]
     dataset_id = csv_path.stem.split("_")[-1]
     readable_key = COLUMN_NAME_MAP.get(param_key, param_key)
-    if metric_key:
-        metric_l = _METRIC_LABELS.get(metric_key, metric_key)
-        return f"{metric_l} dla {readable_key} na zbiorze {dataset_id} ({tree_variant})"
-    return f"Dokładność dla {readable_key} na zbiorze {dataset_id} ({tree_variant})"
+    return f"{readable_key} na zbiorze {dataset_id} ({tree_variant})"
 
 
 def main() -> None:
@@ -329,11 +370,13 @@ def main() -> None:
         summary = _build_summary(csv_path)
         if summary is None:
             continue
+        bold_rows = _bold_rows_for_mean(summary, COLUMN_NAME_MAP["mean_accuracy"])
         table_config = TableBuilderOptions(
             caption=_build_title_from_path(csv_path),
             label=f"tab:{csv_path.stem}",
             column_lines=True,
             header_hline=True,
+            bold_rows=bold_rows,
             float_format="%.2f",
         )
         table = TableBuilder(summary, table_config)
@@ -343,6 +386,10 @@ def main() -> None:
             metric_summary = _build_metric_summary(csv_path, metric_key)
             if metric_summary is None:
                 continue
+            metric_bold_rows = _bold_rows_for_mean(
+                metric_summary,
+                COLUMN_NAME_MAP[f"mean_{metric_key}"],
+            )
             metric_table_config = TableBuilderOptions(
                 caption=(
                     f"{_METRIC_LABELS[metric_key]} - {_build_title_from_path(csv_path)}"
@@ -350,6 +397,7 @@ def main() -> None:
                 label=f"tab:{csv_path.stem}_{metric_key}",
                 column_lines=True,
                 header_hline=True,
+                bold_rows=metric_bold_rows,
                 float_format="%.2f",
             )
             metric_table = TableBuilder(metric_summary, metric_table_config)

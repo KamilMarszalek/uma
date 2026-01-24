@@ -282,7 +282,9 @@ Funkcja oceny jakości testu (Gain) & Information Gain & Gini Gain \\ \hline
 W jednym badaniu zmieniał się dokładnie \textbf{jeden} sprawdzany hiperparametr.
 
 Dla każdego badania przeanalizowane zostały dokładność, czułośc, precyzja, wynik F1 oraz czas trenowania lasu.
-W celu utrzymania przejrzystości dokumentu wyniki zostaną zaprezentowane w większości w postaci zaagregowanych wykresów.
+W celu utrzymania przejrzystości dokumentu wyniki zostaną zaprezentowane w postaci zaagregowanych wykresów.
+Wykresy nie są w stanie przedstawić małych różnic w wynikach, jednak ze względu na stochastyczny charakter badanych algorytmów,
+różnice te mogą być uznane za szum statystyczny - z tego powodu dodatkowe tabele nie zostały zawarte w dokumencie.
 
 \subsection{Liczba drzew w lesie}
 
@@ -659,7 +661,7 @@ Dla drzew CART została zaimplementowana tylko jedna taka funkcja, dlatego badan
     \item Zbiór 14 - Nawrót raka piersi
 
     Delikatnie wyróżniła się funkcja \textbf{gain ratio}, dla której wszystkie miary są minimalnie większe. Różnica jest na tyle mała, że może
-    byc to uznane za szum statystyczny, jednak z uwagi na brak innych przesłanego zostanie ona wybrana jako domyślna dla drzew ID3 w porównaniu modeli.
+    byc to uznane za szum statystyczny, jednak z uwagi na brak innych przesłanek zostanie ona wybrana jako domyślna dla drzew ID3 w porównaniu modeli.
 
     \begin{figure}[H]
         \centering

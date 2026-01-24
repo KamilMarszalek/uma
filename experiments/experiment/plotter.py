@@ -2,6 +2,7 @@ import argparse
 from dataclasses import dataclass
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 from experiments.experiment import summary_utils as summaries
 from matplotlib import pyplot as plt
@@ -178,6 +179,72 @@ def _plot_metrics_combined(
     plt.close(fig)
 
 
+def _plot_compare_metrics(
+    summary: pd.DataFrame, csv_path: Path, output_dir: Path
+) -> None:
+    if summary.empty:
+        return
+
+    dataset_id = csv_path.stem.split("_")[-1]
+    title = f"Porównanie metryk na zbiorze {dataset_id}"
+
+    metrics = [metric for metric in _METRIC_KEYS if metric in summary.columns]
+    if not metrics:
+        return
+
+    _set_plot_style()
+    fig, ax = plt.subplots(figsize=(12, 7))
+    x_positions = np.arange(len(summary.index))
+    bar_width = 0.8 / max(len(metrics), 1)
+    offsets = (np.arange(len(metrics)) - (len(metrics) - 1) / 2) * bar_width
+
+    for offset, metric_key in zip(offsets, metrics, strict=False):
+        ax.bar(
+            x_positions + offset,
+            summary[metric_key].to_numpy(),
+            width=bar_width,
+            label=summaries.METRIC_LABELS.get(metric_key, metric_key),
+            color=_METRIC_COLORS.get(metric_key, "#2c3e50"),
+        )
+
+    ax.set_xlabel("Typ lasu", fontsize=12)
+    ax.set_ylabel("Wartość metryki", fontsize=12)
+    ax.set_title(title, fontsize=14, pad=20)
+    ax.set_xticks(x_positions)
+    ax.set_xticklabels(summary.index.astype(str), rotation=0)
+    ax.legend(loc="lower left", frameon=True, shadow=True)
+    plt.tight_layout()
+    plt.savefig(output_dir / f"{csv_path.stem}_compare_metrics.png", dpi=300)
+    plt.close(fig)
+
+
+def plot_compare_metrics_for_csv(csv_path: Path, output_dir: Path) -> None:
+    df = pd.read_csv(csv_path)
+    if df.empty or "forest_type" not in df.columns:
+        return
+
+    metric_values: dict[str, pd.Series] = {}
+    for metric_key in _METRIC_KEYS:
+        values = summaries._compute_metric_values(df, metric_key)
+        if values is not None:
+            metric_values[metric_key] = values
+
+    if not metric_values:
+        return
+
+    metrics_df = pd.DataFrame(metric_values)
+    metrics_df["forest_type"] = df["forest_type"].astype(str)
+
+    forest_order = metrics_df["forest_type"].dropna().unique().tolist()
+    summary = (
+        metrics_df.groupby("forest_type", dropna=False)[list(metric_values.keys())]
+        .mean(numeric_only=True)
+        .reindex(forest_order)
+    )
+
+    _plot_compare_metrics(summary, csv_path, output_dir)
+
+
 def plot_metrics_for_csv(csv_path: Path, output_dir: Path) -> None:
     df = pd.read_csv(csv_path)
     if df.empty:
@@ -255,7 +322,10 @@ def main() -> None:
     output_dir.mkdir(parents=True, exist_ok=True)
 
     for csv_path in sorted(input_dir.glob("*.csv")):
-        plot_metrics_for_csv(csv_path, output_dir)
+        if csv_path.stem.startswith("Compare_on"):
+            plot_compare_metrics_for_csv(csv_path, output_dir)
+        else:
+            plot_metrics_for_csv(csv_path, output_dir)
 
 
 if __name__ == "__main__":

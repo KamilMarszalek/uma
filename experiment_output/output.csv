@@ -1,1 +1,0 @@
-experiment,forest_type,eval_function,num_trees,sample_ratio,feature_ratio,tree_max_depth,tree_tournament_size,min_samples_split,set_id,train_size,random_seed,categorial_encoding,time_of_building,accuracy,TP,TN,FP,FN

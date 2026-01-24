@@ -1,6 +1,9 @@
+import argparse
 from dataclasses import dataclass
+from pathlib import Path
 
 import pandas as pd
+from experiments.experiment import summary_utils as summaries
 from matplotlib import pyplot as plt
 
 
@@ -10,6 +13,23 @@ class PlotterOptions:
     x_label: str | None = None
     y_label: str | None = None
     output_path: str | None = None
+
+
+@dataclass(frozen=True, slots=True)
+class MetricPlotSpec:
+    param_key: str
+    param_label: str
+    title: str
+    output_path: Path
+
+
+@dataclass(frozen=True, slots=True)
+class CombinedPlotSpec:
+    param_key: str
+    param_label: str
+    title: str
+    output_path: Path
+    time_summary: pd.DataFrame | None
 
 
 def plot_line_chart(
@@ -39,6 +59,204 @@ def plot_line_chart(
     plt.close()
 
 
+_METRIC_KEYS = ("accuracy", "precision", "recall", "f1")
+_METRIC_COLORS = {
+    "accuracy": "#27ae60",
+    "precision": "#2980b9",
+    "recall": "#f39c12",
+    "f1": "#8e44ad",
+}
+
+
+def _set_plot_style() -> None:
+    try:
+        plt.style.use("seaborn-v0_8-whitegrid")
+    except OSError:
+        pass
+
+
+def _plot_metric(
+    summary: pd.DataFrame,
+    metric_key: str,
+    spec: MetricPlotSpec,
+) -> None:
+    _set_plot_style()
+    x_labels = summary[spec.param_key].astype(str)
+    mean_col = f"mean_{metric_key}"
+    std_col = f"std_{metric_key}"
+    y_values = summary[mean_col].to_numpy()
+    y_err = summary[std_col].fillna(0).to_numpy()
+
+    fig, ax = plt.subplots(figsize=(12, 7))
+    ax.errorbar(
+        x_labels,
+        y_values,
+        yerr=y_err,
+        fmt="-o",
+        capsize=6,
+        linewidth=2.5,
+        color=_METRIC_COLORS.get(metric_key, "#2c3e50"),
+        label=summaries.METRIC_LABELS.get(metric_key, metric_key),
+    )
+    ax.set_xlabel(f"Parametr: {spec.param_label}", fontsize=12)
+    ax.set_ylabel("Wartość metryki", fontsize=12)
+    ax.set_title(spec.title, fontsize=14, pad=20)
+    ax.legend(loc="upper left", frameon=True, shadow=True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(spec.output_path, dpi=300)
+    plt.close(fig)
+
+
+def _plot_metrics_combined(
+    summaries: dict[str, pd.DataFrame],
+    spec: CombinedPlotSpec,
+) -> None:
+    if "accuracy" not in summaries:
+        return
+
+    base = summaries["accuracy"][[spec.param_key]].copy()
+    x_labels = base[spec.param_key].astype(str)
+
+    _set_plot_style()
+    fig, ax = plt.subplots(figsize=(12, 7))
+
+    for metric_key in _METRIC_KEYS:
+        summary = summaries.get(metric_key)
+        if summary is None:
+            continue
+        aligned = base.merge(summary, on=spec.param_key, how="left")
+        mean_col = f"mean_{metric_key}"
+        std_col = f"std_{metric_key}"
+        y_values = aligned[mean_col].to_numpy()
+        y_err = aligned[std_col].fillna(0).to_numpy()
+        ax.errorbar(
+            x_labels,
+            y_values,
+            yerr=y_err,
+            fmt="-o",
+            capsize=6,
+            linewidth=2.5,
+            color=_METRIC_COLORS.get(metric_key, "#2c3e50"),
+            label=summaries.METRIC_LABELS.get(metric_key, metric_key),
+        )
+
+    ax.set_xlabel(f"Parametr: {spec.param_label}", fontsize=12)
+    ax.set_ylabel("Wartość metryki", fontsize=12)
+    ax.set_title(spec.title, fontsize=14, pad=20)
+
+    if spec.time_summary is not None:
+        aligned_time = base.merge(spec.time_summary, on=spec.param_key, how="left")
+        ax2 = ax.twinx()
+        ax2.errorbar(
+            x_labels,
+            aligned_time["mean_time_of_building"].to_numpy(),
+            fmt="--s",
+            capsize=6,
+            linewidth=2.0,
+            color="#e74c3c",
+            label="Czas trenowania (s)",
+        )
+        ax2.set_ylabel("Czas (sekundy)", fontsize=12, color="#e74c3c")
+        ax2.tick_params(axis="y", labelcolor="#e74c3c")
+        ax2.grid(False)
+
+        lines1, labels1 = ax.get_legend_handles_labels()
+        lines2, labels2 = ax2.get_legend_handles_labels()
+        ax.legend(
+            lines1 + lines2,
+            labels1 + labels2,
+            loc="upper left",
+            frameon=True,
+            shadow=True,
+        )
+    else:
+        ax.legend(loc="upper left", frameon=True, shadow=True)
+    plt.xticks(rotation=45)
+    plt.tight_layout()
+    plt.savefig(spec.output_path, dpi=300)
+    plt.close(fig)
+
+
+def plot_metrics_for_csv(csv_path: Path, output_dir: Path) -> None:
+    df = pd.read_csv(csv_path)
+    if df.empty:
+        return
+
+    param_info = summaries.get_param_info(csv_path, df)
+    if not param_info:
+        return
+    param_key, _ = param_info
+    param_label = summaries.COLUMN_NAME_MAP.get(param_key, param_key)
+
+    metric_summaries: dict[str, pd.DataFrame] = {}
+    for metric_key in _METRIC_KEYS:
+        summary = summaries.build_metric_summary_from_df(
+            df,
+            csv_path,
+            metric_key,
+            include_extremes=False,
+        )
+        if summary is not None:
+            metric_summaries[metric_key] = summary
+
+    if not metric_summaries:
+        return
+
+    time_summary = summaries.build_metric_summary_from_df(
+        df,
+        csv_path,
+        "time_of_building",
+        include_extremes=False,
+    )
+    base_title = summaries.build_title_from_path(csv_path)
+    combined_title = f"Metryki jakości - {base_title}"
+    combined_spec = CombinedPlotSpec(
+        param_key=param_key,
+        param_label=param_label,
+        title=combined_title,
+        output_path=output_dir / f"{csv_path.stem}_metrics.png",
+        time_summary=time_summary,
+    )
+    _plot_metrics_combined(metric_summaries, combined_spec)
+
+    for metric_key, summary in metric_summaries.items():
+        metric_label = summaries.METRIC_LABELS.get(metric_key, metric_key)
+        metric_title = f"{metric_label} - {base_title}"
+        metric_spec = MetricPlotSpec(
+            param_key=param_key,
+            param_label=param_label,
+            title=metric_title,
+            output_path=output_dir / f"{csv_path.stem}_{metric_key}.png",
+        )
+        _plot_metric(summary, metric_key, metric_spec)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(
+        description="Generate metric plots from experiment_output CSV files."
+    )
+    parser.add_argument(
+        "--input-dir",
+        type=Path,
+        default=Path("experiment_output"),
+        help="Directory with experiment CSV outputs.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="Directory for charts (defaults to input dir).",
+    )
+    args = parser.parse_args()
+
+    input_dir = args.input_dir
+    output_dir = args.output_dir or input_dir
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    for csv_path in sorted(input_dir.glob("*.csv")):
+        plot_metrics_for_csv(csv_path, output_dir)
+
+
 if __name__ == "__main__":
-    # TODO: generate plots from our csv result files
-    pass
+    main()

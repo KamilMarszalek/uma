@@ -14,7 +14,9 @@ fi
 files=("${input_dir}"/*)
 for ((i = start_index; i < ${#files[@]}; i += 2)); do
     file="${files[i]}"
+    echo "Running experiment for file: ${file}"
     if [[ -f "${file}" ]]; then
         uv run python -m src.main "${file}"
     fi
+    echo "Finished experiment for file: ${file}"
 done

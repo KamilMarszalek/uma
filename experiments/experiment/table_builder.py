@@ -203,6 +203,10 @@ COLUMN_NAME_MAP = {
     "std_f1": "Std",
     "max_f1": "Maks",
     "min_f1": "Min",
+    "mean_time_of_building": "Średnia",
+    "std_time_of_building": "Std",
+    "max_time_of_building": "Maks",
+    "min_time_of_building": "Min",
 }
 
 _METRIC_LABELS = {
@@ -210,6 +214,7 @@ _METRIC_LABELS = {
     "precision": "Precyzja",
     "recall": "Czułość",
     "f1": "F1",
+    "time_of_building": "Czas trenowania (s)",
 }
 
 _METRIC_FUNCTIONS = {
@@ -256,6 +261,32 @@ def _build_summary(csv_path: Path) -> pd.DataFrame | None:
             std_accuracy="std",
             max_accuracy="max",
             min_accuracy="min",
+        )
+        .reset_index()
+        .sort_values(param_column)
+        .rename(columns={param_column: param_key})
+    )
+    summary = summary.rename(columns=COLUMN_NAME_MAP)
+    return summary
+
+
+def _build_time_summary(csv_path: Path) -> pd.DataFrame | None:
+    df = pd.read_csv(csv_path)
+    if df.empty or "time_of_building" not in df.columns:
+        return None
+
+    param_info = _get_param_info(csv_path, df)
+    if not param_info:
+        return None
+    param_key, param_column = param_info
+
+    summary = (
+        df.groupby(param_column, dropna=False)["time_of_building"]
+        .agg(
+            mean_time_of_building="mean",
+            std_time_of_building="std",
+            max_time_of_building="max",
+            min_time_of_building="min",
         )
         .reset_index()
         .sort_values(param_column)
@@ -324,13 +355,18 @@ def _build_metric_summary(
     return summary
 
 
-def _bold_rows_for_mean(summary: pd.DataFrame, mean_column: str) -> list[int]:
+def _bold_rows_for_mean(
+    summary: pd.DataFrame, mean_column: str, max_or_min: str = "max"
+) -> list[int]:
     if mean_column not in summary.columns:
         return []
     mean_series = summary[mean_column]
     if mean_series.dropna().empty:
         return []
-    max_value = mean_series.max()
+    if max_or_min == "max":
+        max_value = mean_series.max()
+    else:
+        max_value = mean_series.min()
     return mean_series[mean_series == max_value].index.tolist()
 
 
@@ -382,6 +418,28 @@ def main() -> None:
         table = TableBuilder(summary, table_config)
         table.to_latex(output_dir / f"{csv_path.stem}.tex")
 
+        time_summary = _build_time_summary(csv_path)
+        if time_summary is not None:
+            time_bold_rows = _bold_rows_for_mean(
+                time_summary,
+                COLUMN_NAME_MAP["mean_time_of_building"],
+                max_or_min="min",
+            )
+            time_title = _build_title_from_path(
+                csv_path,
+                metric_key="time_of_building",
+            )
+            time_table_config = TableBuilderOptions(
+                caption=f"Czas trenowania - {time_title}",
+                label=f"tab:{csv_path.stem}_time",
+                column_lines=True,
+                header_hline=True,
+                bold_rows=time_bold_rows,
+                float_format="%.2f",
+            )
+            time_table = TableBuilder(time_summary, time_table_config)
+            time_table.to_latex(output_dir / f"{csv_path.stem}_time.tex")
+
         for metric_key in ("precision", "recall", "f1"):
             metric_summary = _build_metric_summary(csv_path, metric_key)
             if metric_summary is None:
@@ -390,10 +448,12 @@ def main() -> None:
                 metric_summary,
                 COLUMN_NAME_MAP[f"mean_{metric_key}"],
             )
+            metric_title = _build_title_from_path(
+                csv_path,
+                metric_key=metric_key,
+            )
             metric_table_config = TableBuilderOptions(
-                caption=(
-                    f"{_METRIC_LABELS[metric_key]} - {_build_title_from_path(csv_path)}"
-                ),
+                caption=f"{_METRIC_LABELS[metric_key]} - {metric_title}",
                 label=f"tab:{csv_path.stem}_{metric_key}",
                 column_lines=True,
                 header_hline=True,

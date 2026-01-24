@@ -13,6 +13,7 @@ PARAM_COLUMN_MAP = {
     "max_depth": "tree_max_depth",
     "min_samples_split": "min_samples_split",
     "eval_function": "eval_function",
+    "on": "forest_type",
 }
 
 COLUMN_NAME_MAP = {
@@ -23,6 +24,7 @@ COLUMN_NAME_MAP = {
     "max_depth": "Maksymalna głębokość",
     "min_samples_split": "Minimalna liczba próbek do podziału",
     "eval_function": "Funkcja oceny",
+    "on": "Typ lasu",
     "mean_accuracy": "Średnia",
     "std_accuracy": "Std",
     "max_accuracy": "Maks",
@@ -62,7 +64,7 @@ _METRIC_FUNCTIONS = {
 
 def extract_param_key(stem: str) -> str | None:
     stem = re.sub(r"_\d+$", "", stem)
-    for prefix in ("CART_", "ID3_", "SKLEARN_"):
+    for prefix in ("CART_", "ID3_", "SKLEARN_", "Compare_"):
         if stem.startswith(prefix):
             return stem[len(prefix) :]
     return None

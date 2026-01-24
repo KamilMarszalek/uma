@@ -17,6 +17,7 @@ class SklearnTreeWrapper(BaseTree):
             random_state=config.random_seed,
             max_depth=config.max_depth,
             criterion=config.eval_function.value,
+            max_features="sqrt",
         )
 
     def fit(

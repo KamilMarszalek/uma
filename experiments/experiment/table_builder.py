@@ -16,6 +16,7 @@ class TableBuilderOptions:
     right_align_cells: list[tuple[int, str]] | None = None
     bold_rows: list[int] | None = None
     float_format: str = "%.2f"
+    decimal: str = ","
     escape: bool | None = True
 
 
@@ -34,6 +35,7 @@ class TableBuilder:
         self.right_align_cells = opts.right_align_cells or []
         self.bold_rows = opts.bold_rows or []
         self.float_format = opts.float_format
+        self.decimal = opts.decimal
         self.escape = opts.escape
 
     def _column_format(self) -> str:
@@ -59,7 +61,10 @@ class TableBuilder:
         if pd.isna(value):
             return "NaN"
         if isinstance(value, (float, np.floating)):
-            return self.float_format % value
+            formatted = self.float_format % value
+            if self.decimal != ".":
+                formatted = formatted.replace(".", self.decimal)
+            return formatted
         return str(value)
 
     def _prepare_dataframe(self) -> tuple[pd.DataFrame, bool]:
@@ -161,7 +166,7 @@ class TableBuilder:
             label=self.label,
             position="htbp",
             escape=False if needs_raw_latex else self.escape,
-            decimal=",",
+            decimal=self.decimal,
             formatters=formatters,
         )
         latex_str = self._inject_table_style(latex_str)

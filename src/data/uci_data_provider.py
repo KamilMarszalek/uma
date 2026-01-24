@@ -22,7 +22,9 @@ def get_uci_data(  # noqa: PLR0913
         data, targets = download_uci_data(set_id)
 
     if "id" in map(str.lower, data.columns):
-        data = data.drop(columns=[col for col in data.columns if col.lower() == "id"])
+        data = data.drop(
+            columns=[col for col in data.columns if col.lower() == "id"],
+        )
 
     cat_cols = data.select_dtypes(include=["object", "category"]).columns
     num_cols = data.columns.difference(cat_cols)

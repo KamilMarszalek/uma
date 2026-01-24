@@ -19,6 +19,8 @@ def encode_categorical(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def encode_one_hot(df: pd.DataFrame) -> pd.DataFrame:
+    if df.empty or df.shape[1] == 0:
+        return df.copy()
     return pd.get_dummies(df, prefix=df.columns, columns=df.columns, dtype=int)
 
 

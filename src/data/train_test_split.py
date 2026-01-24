@@ -11,7 +11,10 @@ def train_test_split(
 ) -> tuple[pd.DataFrame, pd.DataFrame, pd.Series, pd.Series]:
     rng = np.random.default_rng(random_seed)
 
-    def divide_indices(n_samples: int, n_train: int) -> tuple[np.ndarray, np.ndarray]:
+    def divide_indices(
+        n_samples: int,
+        n_train: int,
+    ) -> tuple[np.ndarray, np.ndarray]:
         indices = rng.permutation(n_samples)
         train_indices = indices[:n_train]
         test_indices = indices[n_train:]

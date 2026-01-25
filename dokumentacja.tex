@@ -924,8 +924,10 @@ przekładają się na poprawę jakości modelu. W przypadku niektórych zbiorów
 różnorodności drzew w lesie, ale również dla danych o innej charakterystyce mogą nie prowadzić do żadnej poprawy, a nawet powodować pogorszenie
 zachowania modelu. Potencjalne zastosowanie tej modyfikacji w praktyce wymagałoby przeprowadzenia analizy na specyficznym zbiorze danych
 przypisanym do danego problemu, aby ocenić jej skuteczność w konkretnym przypadku.
+W praktyce nasza implementacja drzewa CART różni się od standardowej implementacji z biblioteki scikit-learn sposobem w jaki różnicowany jest zbiór atrybutów biorących udział w tworzeniu podziału węzła.
+W naszej implementacji wybór atrybutów realizowany jest poprzez turniej (na wzór turnieju w algorytmach ewolucyjnych) - możliwe są powtórzenia atrybutów. Sprowadza się to do losowania ze zwracaniem,
+podczas gdy w bibliotece scikit-learn wybór ten jest realizowany poprzez losowanie bez zwracania tylu atrybutów, ile wskazuje parametr \texttt{max\_features}.
 
 
 \end{document}
-
 

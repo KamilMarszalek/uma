@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from experiments.experiment import summary_utils as summaries
 from matplotlib import pyplot as plt
+from matplotlib.ticker import FuncFormatter
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,25 +40,28 @@ def plot_line_chart(
     y_col: str,
     options: PlotterOptions | None = None,
 ) -> None:
-    plt.figure(figsize=(10, 6))
-    plt.plot(data[x_col], data[y_col], marker="o")
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.plot(data[x_col], data[y_col], marker="o")
 
     if options is not None:
         if options.title:
-            plt.title(options.title)
+            ax.set_title(options.title)
         if options.x_label:
-            plt.xlabel(options.x_label)
+            ax.set_xlabel(options.x_label)
         if options.y_label:
-            plt.ylabel(options.y_label)
+            ax.set_ylabel(options.y_label)
 
-    plt.grid(True)
+    _apply_decimal_comma(ax)
+    if pd.api.types.is_numeric_dtype(data[x_col]):
+        _apply_decimal_comma(ax, axis="x")
+    ax.grid(True)
 
     if options and options.output_path:
-        plt.savefig(options.output_path)
+        fig.savefig(options.output_path)
     else:
         plt.show()
 
-    plt.close()
+    plt.close(fig)
 
 
 _METRIC_KEYS = ("accuracy", "precision", "recall", "f1")
@@ -67,6 +71,30 @@ _METRIC_COLORS = {
     "recall": "#f39c12",
     "f1": "#8e44ad",
 }
+
+
+def _format_decimal_label(value: object) -> str:
+    if value is None or pd.isna(value):
+        return ""
+    if isinstance(value, (int, np.integer)):
+        return str(int(value))
+    if isinstance(value, (float, np.floating)):
+        text = f"{value:g}"
+    else:
+        text = str(value)
+    return text.replace(".", ",")
+
+
+_DECIMAL_COMMA_FORMATTER = FuncFormatter(
+    lambda value, _: f"{value:g}".replace(".", ",")
+)
+
+
+def _apply_decimal_comma(ax: plt.Axes, axis: str = "y") -> None:
+    if axis in {"y", "both"}:
+        ax.yaxis.set_major_formatter(_DECIMAL_COMMA_FORMATTER)
+    if axis in {"x", "both"}:
+        ax.xaxis.set_major_formatter(_DECIMAL_COMMA_FORMATTER)
 
 
 def _set_plot_style() -> None:
@@ -82,7 +110,7 @@ def _plot_metric(
     spec: MetricPlotSpec,
 ) -> None:
     _set_plot_style()
-    x_labels = summary[spec.param_key].astype(str)
+    x_labels = summary[spec.param_key].map(_format_decimal_label)
     mean_col = f"mean_{metric_key}"
     std_col = f"std_{metric_key}"
     y_values = summary[mean_col].to_numpy()
@@ -99,6 +127,7 @@ def _plot_metric(
         color=_METRIC_COLORS.get(metric_key, "#2c3e50"),
         label=summaries.METRIC_LABELS.get(metric_key, metric_key),
     )
+    _apply_decimal_comma(ax)
     ax.set_xlabel(f"Parametr: {spec.param_label}", fontsize=12)
     ax.set_ylabel("Wartość metryki", fontsize=12)
     ax.set_title(spec.title, fontsize=14, pad=20)
@@ -117,7 +146,7 @@ def _plot_metrics_combined(
         return
 
     base = metric_summaries["accuracy"][[spec.param_key]].copy()
-    x_labels = base[spec.param_key].astype(str)
+    x_labels = base[spec.param_key].map(_format_decimal_label)
 
     _set_plot_style()
     fig, ax = plt.subplots(figsize=(12, 7))
@@ -142,6 +171,7 @@ def _plot_metrics_combined(
             label=summaries.METRIC_LABELS.get(metric_key, metric_key),
         )
 
+    _apply_decimal_comma(ax)
     ax.set_xlabel(f"Parametr: {spec.param_label}", fontsize=12)
     ax.set_ylabel("Wartość metryki", fontsize=12)
     ax.set_title(spec.title, fontsize=14, pad=20)
@@ -158,6 +188,7 @@ def _plot_metrics_combined(
             color="#e74c3c",
             label="Czas trenowania (s)",
         )
+        _apply_decimal_comma(ax2)
         ax2.set_ylabel("Czas (sekundy)", fontsize=12, color="#e74c3c")
         ax2.tick_params(axis="y", labelcolor="#e74c3c")
         ax2.grid(False)
@@ -207,6 +238,7 @@ def _plot_compare_metrics(
             color=_METRIC_COLORS.get(metric_key, "#2c3e50"),
         )
 
+    _apply_decimal_comma(ax)
     ax.set_xlabel("Typ lasu", fontsize=12)
     ax.set_ylabel("Wartość metryki", fontsize=12)
     ax.set_title(title, fontsize=14, pad=20)

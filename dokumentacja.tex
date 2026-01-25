@@ -383,7 +383,7 @@ Sprawdzane wartości zostały ograniczone do maksymalnie 200 drzew ze względu n
 \end{itemize}
 
 
-\subsection{Współczynnik próbkowania zbioru trenującego}
+\subsection{Współczynnik próbkowania przykładów ze zbioru trenującego}
 
 Współczynnik próbkowania określa, jak dużą część zbioru trenującego wykorzystujemy do budowy pojedynczego drzewa w lesie.
 Jego mniejsze wartości zwiększają różnorodność drzew, co może prowadzić do redukcji zjawiska przeuczania.
@@ -919,14 +919,16 @@ las SKLEARN to standardowy, niezmodyfikowany las losowy.
 
 \section{Wnioski}
 
-Przeprowadzona analiza nie wykazała jednoznacznie, czy modyfikacje lasu losowego w postaci wyboru atrybutów podziału na podstawie turnieju
-przekładają się na poprawę jakości modelu. W przypadku niektórych zbiorów danych mogą one pozwalać na uzyskanie lepszych wyników przez zwiększenie
-różnorodności drzew w lesie, ale również dla danych o innej charakterystyce mogą nie prowadzić do żadnej poprawy, a nawet powodować pogorszenie
-zachowania modelu. Potencjalne zastosowanie tej modyfikacji w praktyce wymagałoby przeprowadzenia analizy na specyficznym zbiorze danych
-przypisanym do danego problemu, aby ocenić jej skuteczność w konkretnym przypadku.
 W praktyce nasza implementacja drzewa CART różni się od standardowej implementacji z biblioteki scikit-learn sposobem w jaki różnicowany jest zbiór atrybutów biorących udział w tworzeniu podziału węzła.
 W naszej implementacji wybór atrybutów realizowany jest poprzez turniej (na wzór turnieju w algorytmach ewolucyjnych) - możliwe są powtórzenia atrybutów. Sprowadza się to do losowania ze zwracaniem,
 podczas gdy w bibliotece scikit-learn wybór ten jest realizowany poprzez losowanie bez zwracania tylu atrybutów, ile wskazuje parametr \texttt{max\_features}.
+
+
+Przeprowadzona analiza nie wykazała jednoznacznie, czy modyfikacje lasu losowego w postaci wyboru atrybutów podziału na podstawie turnieju
+przekładają się na poprawę jakości modelu. W przypadku niektórych zbiorów danych mogą one pozwalać na uzyskanie lepszych wyników przez zwiększenie
+różnorodności drzew w lesie, ale dla danych o innej charakterystyce mogą nie prowadzić do żadnej poprawy, a nawet powodować pogorszenie
+zachowania modelu. Potencjalne zastosowanie tej modyfikacji w praktyce wymagałoby przeprowadzenia analizy na specyficznym zbiorze danych
+przypisanym do danego problemu, aby ocenić jej skuteczność w konkretnym przypadku.
 
 
 \end{document}

@@ -3,8 +3,8 @@ import numpy as np
 from src.forest.config import TournamentForestConfig
 from src.forest.forest import TournamentForest
 from src.tree.eval_func import InformationGain
-from src.tree.config import ID3Config
-from src.tree.cart_tree import ID3Tree
+from src.tree.config import TreeConfig
+from src.tree.tree_class import TreeClass
 
 
 def test_forest_predict():
@@ -15,14 +15,14 @@ def test_forest_predict():
         num_of_trees=5,
         sample_ratio=1.0,
         feature_ratio=1.0,
-        tree_class=ID3Tree,
-        tree_config_class=ID3Config,
+        tree_class=TreeClass.ID3,
+        tree_config_class=TreeConfig.ID3,
         eval_function=InformationGain(),
         max_depth=3,
         tournament_size=2,
     )
-    forest = TournamentForest(data, targets, config)
-    forest.fit()
+    forest = TournamentForest(config)
+    forest.fit(data=data, targets=targets, n_jobs=1)
 
     assert forest.predict(np.array([0])) == 0
     assert forest.predict(np.array([1])) == 1
@@ -37,13 +37,13 @@ def test_forest_bootstrap_sampling():
         sample_ratio=0.5,
         feature_ratio=1.0,
         eval_function=InformationGain(),
-        tree_class=ID3Tree,
-        tree_config_class=ID3Config,
+        tree_class=TreeClass.ID3,
+        tree_config_class=TreeConfig.ID3,
         max_depth=3,
         tournament_size=2,
     )
-    forest = TournamentForest(data, targets, config)
-    forest.fit()
+    forest = TournamentForest(config)
+    forest.fit(data=data, targets=targets, n_jobs=1)
 
     # forest should contain 3 trees
     assert len(forest.forest) == 3

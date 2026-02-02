@@ -2,7 +2,7 @@ import numpy as np
 
 from src.tree.config import ID3Config
 from src.tree.eval_func import InformationGain
-from src.tree.cart_tree import ID3Tree
+from src.tree.id3_tree import ID3Tree
 
 
 def test_tree_single_label():
@@ -174,7 +174,8 @@ def test_tree_tournament_selection_restricted_features():
         eval_function=InformationGain(),
         tournament_size=10,
     )
-    tree = ID3Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(data=data, targets=targets, features=[0])
     assert tree.root.feature == 0
 
 
@@ -221,17 +222,18 @@ def test_tree_handles_empty_dataset():
         tournament_size=2,
     )
 
-    tree = ID3Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(data=data, targets=targets, features=[0])
 
     assert tree.root.target is None or tree.root.target == tree.root.default_label
 
 
 def test_tree_predict_on_empty_children_dict():
-    tree = ID3Tree(
+    tree = ID3Tree(config=ID3Config(1, InformationGain(), 2))
+    tree.fit(
         data=np.array([[0]]),
         targets=np.array([1]),
         features=[0],
-        config=ID3Config(1, InformationGain(), 2),
     )
     assert tree.predict(np.array([9999])) == 1
 
@@ -245,6 +247,7 @@ def test_tournament_selection_returns_valid_feature():
         eval_function=InformationGain(),
         tournament_size=4,
     )
-    tree = ID3Tree(data, targets, features=[0], config=config)
+    tree = ID3Tree(config=config)
+    tree.fit(data=data, targets=targets, features=[0])
 
     assert tree.root.feature in {0}

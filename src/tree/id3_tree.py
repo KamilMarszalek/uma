@@ -16,6 +16,7 @@ class ID3Tree(BaseTree):
         super().__init__(config.random_seed)
         self.eval_function = config.eval_function
         self.tournament_size = config.tournament_size
+        self.max_depth = config.max_depth
 
     def fit(
         self,
@@ -27,7 +28,7 @@ class ID3Tree(BaseTree):
             data,
             targets,
             features,
-            remaining_depth=None,
+            remaining_depth=self.max_depth,
         )
 
     def predict(self, sample: np.ndarray) -> Any:
